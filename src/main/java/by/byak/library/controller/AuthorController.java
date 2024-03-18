@@ -1,5 +1,6 @@
 package by.byak.library.controller;
 
+import by.byak.library.dto.author.AuthorDTO;
 import by.byak.library.entity.Author;
 import by.byak.library.service.AuthorService;
 import lombok.AllArgsConstructor;
@@ -15,15 +16,20 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AuthorController {
     private final AuthorService service;
+    private static final String SUCCESS = "Completed successfully";
 
     @GetMapping
-    public List<Author> findAllAuthors() {
+    public List<AuthorDTO> findAllAuthors() {
         return service.findAllAuthors();
     }
 
     @GetMapping("/find")
-    public Author findByName (@RequestParam String name) {
-        return service.findByName(name);
+    public ResponseEntity<AuthorDTO> findByName (@RequestParam String name) {
+        AuthorDTO author = service.findByName(name);
+        if (author == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(author);
     }
 
     @PostMapping("/add")
@@ -31,7 +37,7 @@ public class AuthorController {
         Optional<Author> savedAuthor = service.addAuthor(author);
 
         if (savedAuthor.isPresent()) {
-            return new ResponseEntity<>("Success", HttpStatus.CREATED);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("An author with that name already exists", HttpStatus.BAD_REQUEST);
         }
@@ -40,7 +46,7 @@ public class AuthorController {
     @DeleteMapping("/delete/{name}")
     public ResponseEntity<String> deleteAuthorByName (@PathVariable String name) {
         if (service.deleteAuthorByName(name)) {
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("There is no author with that name", HttpStatus.NOT_FOUND);
         }
@@ -50,7 +56,7 @@ public class AuthorController {
     ResponseEntity<String> updateAuthorName(@RequestParam Long id, @RequestParam String name) {
         boolean updated = service.updateAuthorName(id, name);
         if (updated) {
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("An author for the update has not been found", HttpStatus.NOT_FOUND);
         }

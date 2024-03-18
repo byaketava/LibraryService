@@ -1,5 +1,6 @@
 package by.byak.library.controller;
 
+import by.byak.library.dto.genre.GenreDTO;
 import by.byak.library.entity.Genre;
 import by.byak.library.service.GenreService;
 import lombok.AllArgsConstructor;
@@ -15,15 +16,20 @@ import java.util.Optional;
 @AllArgsConstructor
 public class GenreController {
     private final GenreService service;
+    private static final String SUCCESS = "Completed successfully";
 
     @GetMapping
-    public List<Genre> findAllGenres() {
+    public List<GenreDTO> findAllGenres() {
         return service.findAllGenres();
     }
 
     @GetMapping("/find")
-    public Genre findByName(@RequestParam String name) {
-        return service.findByName(name);
+    public ResponseEntity<GenreDTO> findByName(@RequestParam String name) {
+        GenreDTO genre = service.findByName(name);
+        if (genre == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(genre);
     }
 
     @PostMapping("/add")
@@ -31,7 +37,7 @@ public class GenreController {
         Optional<Genre> savedGenre = service.addGenre(genre);
 
         if (savedGenre.isPresent()) {
-            return new ResponseEntity<>("Success", HttpStatus.CREATED);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("A title with that name already exists", HttpStatus.BAD_REQUEST);
         }
@@ -40,7 +46,7 @@ public class GenreController {
     @DeleteMapping("/delete/{name}")
     public ResponseEntity<String> deleteGenreByName(@PathVariable String name) {
         if (service.deleteGenreByName(name)) {
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("There is no genre with that name", HttpStatus.NOT_FOUND);
         }
@@ -50,7 +56,7 @@ public class GenreController {
     ResponseEntity<String> updateGenreName(@RequestParam Long id, @RequestParam String name) {
         boolean updated = service.updateGenreName(id, name);
         if (updated) {
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Publisher to update not found", HttpStatus.NOT_FOUND);
         }

@@ -1,5 +1,6 @@
 package by.byak.library.controller;
 
+import by.byak.library.dto.book.BookDTO;
 import by.byak.library.entity.Book;
 import by.byak.library.service.BookService;
 import lombok.AllArgsConstructor;
@@ -15,15 +16,20 @@ import java.util.Optional;
 @AllArgsConstructor
 public class BookController {
     private final BookService service;
+    private static final String SUCCESS = "Completed successfully";
 
     @GetMapping
-    public List<Book> findAllBooks() {
+    public List<BookDTO> findAllBooks() {
         return service.findAllBooks();
     }
 
     @GetMapping("/find")
-    public Book findByTitle (@RequestParam String title) {
-        return service.findByTitle(title);
+    public ResponseEntity<List<BookDTO>> findByTitle (@RequestParam String title) {
+        List<BookDTO> books = service.findByTitle(title);
+        if (books==null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(books);
     }
 
     @PostMapping("/add")
@@ -31,26 +37,22 @@ public class BookController {
         Optional<Book> savedBook = service.addBook(book);
 
         if (savedBook.isPresent()) {
-            return new ResponseEntity<>("Success", HttpStatus.CREATED);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("A book with that title already exists", HttpStatus.BAD_REQUEST);
         }
     }
 
-    @DeleteMapping("/delete/{name}")
-    public ResponseEntity<String> deleteBookByTitle (@PathVariable String name) {
-        if (service.deleteBookByTitle(name)) {
-            return new ResponseEntity<>("Success", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("There is no book with that name", HttpStatus.NOT_FOUND);
-        }
+    @DeleteMapping("/delete/{id}")
+    public void deleteBookById (@PathVariable Long id) {
+        service.deleteBookById(id);
     }
 
     @PatchMapping("/update")
     ResponseEntity<String> updateBook(@RequestParam Long id, @RequestParam String title) {
         boolean updated = service.updateBook(id, title);
         if (updated) {
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("A book for the update has not been found", HttpStatus.NOT_FOUND);
         }

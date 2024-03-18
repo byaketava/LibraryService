@@ -1,8 +1,10 @@
 package by.byak.library.service;
 
+import by.byak.library.dto.book.BookDTO;
 import by.byak.library.entity.Author;
 import by.byak.library.entity.Book;
 import by.byak.library.entity.Genre;
+import by.byak.library.mapper.book.BookDTOMapper;
 import by.byak.library.repository.AuthorRepository;
 import by.byak.library.repository.BookRepository;
 import by.byak.library.repository.GenreRepository;
@@ -19,21 +21,16 @@ import java.util.Optional;
 @Transactional
 public class BookService {
     private final BookRepository bookRepository;
+    private final BookDTOMapper bookMapper;
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
 
-    public List<Book> findAllBooks() {
-        return bookRepository.findAll();
+    public List<BookDTO> findAllBooks() {
+        return bookRepository.findAll().stream().map(bookMapper).toList();
     }
 
-    public Book findByTitle(String title) {
-        Book book = bookRepository.findByTitle(title);
-
-        if (book == null) {
-            return null;
-        }
-
-        return book;
+    public List<BookDTO> findByTitle(String title) {
+        return bookRepository.findAllByTitle(title).stream().map(bookMapper).toList();
     }
 
     public Optional<Book> addBook(Book book) {
@@ -54,32 +51,23 @@ public class BookService {
             }
         }
 
+        book.setGenres(allGenres);
+
         Author author = book.getAuthor();
         Author existingAuthor = authorRepository.findByName(author.getName());
 
         if (existingAuthor != null) {
             book.setAuthor(existingAuthor);
-            existingAuthor.getBooks().add(book);
         } else {
             Author savedAuthor = authorRepository.save(author);
             book.setAuthor(savedAuthor);
-            savedAuthor.getBooks().add(book);
         }
 
-        book.setGenres(allGenres);
         return Optional.of(bookRepository.save(book));
     }
 
-
-    public boolean deleteBookByTitle(String title) {
-        Book book = bookRepository.findByTitle(title);
-
-        if (book != null) {
-            bookRepository.delete(book);
-            return true;
-        }
-
-        return false;
+    public void deleteBookById(Long id) {
+            bookRepository.deleteBookById(id);
     }
 
     public boolean updateBook(Long id, String title) {
