@@ -12,7 +12,8 @@ import java.util.function.Function;
 public class AuthorDTOMapper implements Function<Author, AuthorDTO> {
     @Override
     public AuthorDTO apply(Author author) {
-        List<BookTitleDTO> bookTitles = author.getBooks().stream().map(book -> new BookTitleDTO(book.getTitle())).toList();
+        List<BookTitleDTO> bookTitles = author.getBooks().stream()
+                .map(book -> new BookTitleDTO(book.getTitle())).toList();
 
         return new AuthorDTO(author.getId(), author.getName(), bookTitles);
     }

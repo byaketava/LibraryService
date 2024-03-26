@@ -43,18 +43,18 @@ public class AuthorController {
         }
     }
 
-    @DeleteMapping("/delete/{name}")
-    public ResponseEntity<String> deleteAuthorByName (@PathVariable String name) {
-        if (service.deleteAuthorByName(name)) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteAuthorById (@RequestParam Long id) {
+        if (service.deleteAuthorById(id)) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("There is no author with that name", HttpStatus.NOT_FOUND);
         }
     }
 
-    @PatchMapping("/update")
-    ResponseEntity<String> updateAuthorName(@RequestParam Long id, @RequestParam String name) {
-        boolean updated = service.updateAuthorName(id, name);
+    @PutMapping("/update")
+    ResponseEntity<String> updateAuthor(@RequestParam Long id, @RequestBody Author author) {
+        boolean updated = service.updateAuthor(id, author);
         if (updated) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {

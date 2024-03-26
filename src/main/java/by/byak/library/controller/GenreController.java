@@ -24,8 +24,8 @@ public class GenreController {
     }
 
     @GetMapping("/find")
-    public ResponseEntity<GenreDTO> findByName(@RequestParam String name) {
-        GenreDTO genre = service.findByName(name);
+    public ResponseEntity<GenreDTO> findGenreByName(@RequestParam String name) {
+        GenreDTO genre = service.findGenreByName(name);
         if (genre == null) {
             return ResponseEntity.notFound().build();
         }
@@ -43,18 +43,18 @@ public class GenreController {
         }
     }
 
-    @DeleteMapping("/delete/{name}")
-    public ResponseEntity<String> deleteGenreByName(@PathVariable String name) {
-        if (service.deleteGenreByName(name)) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteGenreById(@RequestParam Long id) {
+        if (service.deleteGenreById(id)) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("There is no genre with that name", HttpStatus.NOT_FOUND);
         }
     }
 
-    @PatchMapping("/update")
-    ResponseEntity<String> updateGenreName(@RequestParam Long id, @RequestParam String name) {
-        boolean updated = service.updateGenreName(id, name);
+    @PutMapping("/update")
+    ResponseEntity<String> updateGenre(@RequestParam Long id, @RequestBody Genre genre) {
+        boolean updated = service.updateGenre(id, genre);
         if (updated) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {

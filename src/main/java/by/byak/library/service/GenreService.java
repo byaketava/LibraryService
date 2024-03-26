@@ -1,8 +1,10 @@
 package by.byak.library.service;
 
 import by.byak.library.dto.genre.GenreDTO;
+import by.byak.library.entity.Book;
 import by.byak.library.entity.Genre;
 import by.byak.library.mapper.genre.GenreDTOMapper;
+import by.byak.library.repository.BookRepository;
 import by.byak.library.repository.GenreRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -16,13 +18,14 @@ import java.util.Optional;
 @Transactional
 public class GenreService {
     private final GenreRepository genreRepository;
+    private final BookRepository bookRepository;
     private final GenreDTOMapper genreMapper;
 
     public List<GenreDTO> findAllGenres() {
         return genreRepository.findAll().stream().map(genreMapper).toList();
     }
 
-    public GenreDTO findByName(String name) {
+    public GenreDTO findGenreByName(String name) {
         Genre genre = genreRepository.findByName(name);
 
         if (genre == null) {
@@ -32,7 +35,6 @@ public class GenreService {
         return genreMapper.apply(genre);
     }
 
-
     public Optional<Genre> addGenre(Genre genre) {
         if (genreRepository.existsByName(genre.getName())) {
             return Optional.empty();
@@ -41,10 +43,13 @@ public class GenreService {
         return Optional.of(genreRepository.save(genre));
     }
 
-    public boolean deleteGenreByName(String name) {
-        Genre genre = genreRepository.findByName(name);
-
+    public boolean deleteGenreById(Long id) {
+        Genre genre = genreRepository.findById(id).orElse(null);
         if (genre != null) {
+            for (Book book : genre.getBooks()) {
+                book.getGenres().remove(genre);
+                bookRepository.save(book);
+            }
             genreRepository.delete(genre);
             return true;
         }
@@ -52,16 +57,15 @@ public class GenreService {
         return false;
     }
 
-    public boolean updateGenreName(Long id, String newName) {
-        Optional<Genre> genreOptional = genreRepository.findById(id);
+    public boolean updateGenre(Long id, Genre genre) {
+        Genre existingGenre = genreRepository.findById(id).orElse(null);
 
-        if (genreOptional.isPresent()) {
-            Genre genre = genreOptional.get();
-            genre.setName(newName);
-            genreRepository.save(genre);
+        if (existingGenre != null) {
+            existingGenre.setName(genre.getName());
+            existingGenre.setBooks(genre.getBooks());
+            genreRepository.save(existingGenre);
             return true;
         }
-
         return false;
     }
 }

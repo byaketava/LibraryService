@@ -24,12 +24,12 @@ public class BookController {
     }
 
     @GetMapping("/find")
-    public ResponseEntity<List<BookDTO>> findByTitle (@RequestParam String title) {
-        List<BookDTO> books = service.findByTitle(title);
-        if (books==null) {
+    public ResponseEntity<BookDTO> findBookByTitle (@RequestParam String title) {
+        BookDTO book = service.findBookByTitle(title);
+        if (book==null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(books);
+        return ResponseEntity.ok(book);
     }
 
     @PostMapping("/add")
@@ -43,14 +43,18 @@ public class BookController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public void deleteBookById (@PathVariable Long id) {
-        service.deleteBookById(id);
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteBookById (@RequestParam Long id) {
+        if (service.deleteBookById(id)) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("There is no book with that id", HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PatchMapping("/update")
-    ResponseEntity<String> updateBook(@RequestParam Long id, @RequestParam String title) {
-        boolean updated = service.updateBook(id, title);
+    @PutMapping("/update")
+    ResponseEntity<String> updateBook(@RequestParam Long id, @RequestBody Book book) {
+        boolean updated = service.updateBook(id, book);
         if (updated) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
