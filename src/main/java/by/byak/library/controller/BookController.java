@@ -18,6 +18,17 @@ public class BookController {
     private final BookService service;
     private static final String SUCCESS = "Completed successfully";
 
+    @GetMapping("/findByAuthorAndGenre")
+    public ResponseEntity<List<BookDTO>> findByAuthorIdAndGenreId(@RequestParam Long authorId,
+                                                                  @RequestParam Long genreId) {
+        List<BookDTO> books = service.findByAuthorIdAndGenreId(authorId, genreId);
+        if (books.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(books);
+        //return service.findByAuthorIdAndGenreId(authorId, genreId);
+    }
+
     @GetMapping
     public List<BookDTO> findAllBooks() {
         return service.findAllBooks();
@@ -53,7 +64,8 @@ public class BookController {
     }
 
     @PutMapping("/update")
-    ResponseEntity<String> updateBook(@RequestParam Long id, @RequestBody Book book) {
+    ResponseEntity<String> updateBook(@RequestParam Long id,
+                                      @RequestBody Book book) {
         boolean updated = service.updateBook(id, book);
         if (updated) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);

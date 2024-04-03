@@ -7,7 +7,6 @@ import by.byak.library.repository.BookRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +29,10 @@ public class BookService {
         }
 
         return bookMapper.apply(book);
+    }
+
+    public List<BookDTO> findByAuthorIdAndGenreId(Long authorId, Long genreId) {
+        return bookRepository.findByAuthorIdAndGenreId(authorId,genreId).stream().map(bookMapper).toList();
     }
 
     public Optional<Book> addBook(Book book) {
