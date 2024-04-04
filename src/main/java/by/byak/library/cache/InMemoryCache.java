@@ -27,8 +27,4 @@ public class InMemoryCache<K, V> {
     public void clear() {
         cache.clear();
     }
-
-    public boolean containsKey(K key) {
-        return cache.containsKey(key);
-    }
 }
