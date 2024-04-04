@@ -26,7 +26,6 @@ public class BookController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(books);
-        //return service.findByAuthorIdAndGenreId(authorId, genreId);
     }
 
     @GetMapping

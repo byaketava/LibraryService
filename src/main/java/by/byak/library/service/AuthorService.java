@@ -1,5 +1,6 @@
 package by.byak.library.service;
 
+import by.byak.library.cache.InMemoryCache;
 import by.byak.library.dto.author.AuthorDTO;
 import by.byak.library.entity.Author;
 import by.byak.library.entity.Book;
@@ -18,17 +19,24 @@ import java.util.Optional;
 public class AuthorService {
     private final AuthorRepository authorRepository;
     private final AuthorDTOMapper authorMapper;
+    private  final InMemoryCache<Integer, Author> cache;
 
     public List<AuthorDTO> findAllAuthors() {
         return authorRepository.findAll().stream().map(authorMapper).toList();
     }
 
     public AuthorDTO findByName(String name) {
-        Author author = authorRepository.findByName(name);
+        Author cachedAuthor = cache.get(name.hashCode());
+        if (cachedAuthor != null) {
+            return authorMapper.apply(cachedAuthor);
+        }
 
+        Author author = authorRepository.findByName(name);
         if (author == null) {
             return null;
         }
+
+        cache.put(name.hashCode(), author);
 
         return authorMapper.apply(author);
     }
@@ -45,6 +53,7 @@ public class AuthorService {
         Author author = authorRepository.findById(id).orElse(null);
         if (author != null) {
             authorRepository.delete(author);
+            cache.remove(author.getName().hashCode());
             return true;
         }
 
@@ -55,6 +64,8 @@ public class AuthorService {
         Author existingAuthor = authorRepository.findById(id).orElse(null);
 
         if (existingAuthor != null) {
+            cache.remove(author.getName().hashCode());
+
             existingAuthor.setName(author.getName());
             existingAuthor.setBooks(author.getBooks());
             for (Book book : author.getBooks()) {

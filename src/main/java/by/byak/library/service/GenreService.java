@@ -1,5 +1,6 @@
 package by.byak.library.service;
 
+import by.byak.library.cache.InMemoryCache;
 import by.byak.library.dto.genre.GenreDTO;
 import by.byak.library.entity.Book;
 import by.byak.library.entity.Genre;
@@ -20,18 +21,25 @@ public class GenreService {
     private final GenreRepository genreRepository;
     private final BookRepository bookRepository;
     private final GenreDTOMapper genreMapper;
+    private  final InMemoryCache<Integer, Genre> cache;
+    private  final InMemoryCache<Integer, Book> bookCache;
 
     public List<GenreDTO> findAllGenres() {
         return genreRepository.findAll().stream().map(genreMapper).toList();
     }
 
     public GenreDTO findGenreByName(String name) {
-        Genre genre = genreRepository.findByName(name);
+        Genre cachedGenre = cache.get(name.hashCode());
+        if (cachedGenre != null) {
+            return genreMapper.apply(cachedGenre);
+        }
 
+        Genre genre = genreRepository.findByName(name);
         if (genre == null) {
             return null;
         }
 
+        cache.put(name.hashCode(), genre);
         return genreMapper.apply(genre);
     }
 
@@ -49,8 +57,10 @@ public class GenreService {
             for (Book book : genre.getBooks()) {
                 book.getGenres().remove(genre);
                 bookRepository.save(book);
+                bookCache.remove(book.getTitle().hashCode());
             }
             genreRepository.delete(genre);
+            cache.remove(genre.getName().hashCode());
             return true;
         }
 
@@ -61,6 +71,8 @@ public class GenreService {
         Genre existingGenre = genreRepository.findById(id).orElse(null);
 
         if (existingGenre != null) {
+            cache.remove(genre.getName().hashCode());
+
             existingGenre.setName(genre.getName());
             existingGenre.setBooks(genre.getBooks());
             genreRepository.save(existingGenre);

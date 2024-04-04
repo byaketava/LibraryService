@@ -1,5 +1,6 @@
 package by.byak.library.service;
 
+import by.byak.library.cache.InMemoryCache;
 import by.byak.library.dto.book.BookDTO;
 import by.byak.library.entity.Book;
 import by.byak.library.mapper.book.BookDTOMapper;
@@ -16,18 +17,23 @@ import java.util.Optional;
 public class BookService {
     private final BookRepository bookRepository;
     private final BookDTOMapper bookMapper;
+    private  final InMemoryCache<Integer, Book> cache;
 
     public List<BookDTO> findAllBooks() {
         return bookRepository.findAll().stream().map(bookMapper).toList();
     }
 
     public BookDTO findBookByTitle(String title) {
-        Book book = bookRepository.findByTitle(title);
+        Book cachedBook = cache.get(title.hashCode());
+        if (cachedBook != null) {
+            return bookMapper.apply(cachedBook);
+        }
 
+        Book book = bookRepository.findByTitle(title);
         if (book == null) {
             return null;
         }
-
+        cache.put(title.hashCode(), book);
         return bookMapper.apply(book);
     }
 
@@ -47,6 +53,7 @@ public class BookService {
         Book book = bookRepository.findById(id).orElse(null);
         if (book != null) {
             bookRepository.delete(book);
+            cache.remove(book.getTitle().hashCode());
             return true;
         }
 
@@ -57,10 +64,13 @@ public class BookService {
         Book existingBook = bookRepository.findById(id).orElse(null);
 
         if (existingBook != null) {
+            cache.remove(book.getTitle().hashCode());
+
             existingBook.setTitle(book.getTitle());
             existingBook.setAuthor(book.getAuthor());
             existingBook.setGenres(book.getGenres());
             bookRepository.save(existingBook);
+
             return true;
         }
 
