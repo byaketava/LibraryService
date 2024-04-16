@@ -7,14 +7,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
-    Book findByTitle(String title);
+    Optional<Book> findByTitle(String title);
 
     boolean existsByTitle(String title);
 
     @Query("SELECT b FROM Book b JOIN b.genres g JOIN b.author a WHERE a.id = :authorId AND g.id = :genreId")
-    List<Book> findByAuthorIdAndGenreId(@Param("authorId") Long authorId,
+    Optional<List<Book>> findByAuthorIdAndGenreId(@Param("authorId") Long authorId,
                                         @Param("genreId") Long genreId);
 }

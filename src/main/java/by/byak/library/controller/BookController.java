@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
@@ -22,54 +21,36 @@ public class BookController {
     public ResponseEntity<List<BookDTO>> findByAuthorIdAndGenreId(@RequestParam Long authorId,
                                                                   @RequestParam Long genreId) {
         List<BookDTO> books = service.findByAuthorIdAndGenreId(authorId, genreId);
-        if (books.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(books);
     }
 
     @GetMapping
-    public List<BookDTO> findAllBooks() {
-        return service.findAllBooks();
+    public ResponseEntity<List<BookDTO>> findAllBooks() {
+        return ResponseEntity.ok(service.findAllBooks());
     }
 
     @GetMapping("/find")
     public ResponseEntity<BookDTO> findBookByTitle (@RequestParam String title) {
         BookDTO book = service.findBookByTitle(title);
-        if (book==null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(book);
     }
 
     @PostMapping("/add")
     public ResponseEntity<String> addBook(@RequestBody Book book) {
-        Optional<Book> savedBook = service.addBook(book);
-
-        if (savedBook.isPresent()) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>("A book with that title already exists", HttpStatus.BAD_REQUEST);
-        }
+        service.addBook(book);
+        return new ResponseEntity<>(SUCCESS, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteBookById (@RequestParam Long id) {
-        if (service.deleteBookById(id)) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("There is no book with that id", HttpStatus.NOT_FOUND);
-        }
+        service.deleteBookById(id);
+        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
     }
 
     @PutMapping("/update")
     ResponseEntity<String> updateBook(@RequestParam Long id,
                                       @RequestBody Book book) {
-        boolean updated = service.updateBook(id, book);
-        if (updated) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("A book for the update has not been found", HttpStatus.NOT_FOUND);
-        }
+        service.updateBook(id, book);
+        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
     }
 }
