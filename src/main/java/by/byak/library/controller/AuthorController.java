@@ -41,7 +41,8 @@ public class AuthorController {
     }
 
     @PutMapping("/update")
-    ResponseEntity<String> updateAuthor(@RequestParam Long id, @RequestBody Author author) {
+    ResponseEntity<String> updateAuthor(@RequestParam Long id,
+                                        @RequestBody Author author) {
         service.updateAuthor(id, author);
         return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
     }

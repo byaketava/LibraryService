@@ -15,7 +15,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     boolean existsByTitle(String title);
 
-    @Query("SELECT b FROM Book b JOIN b.genres g JOIN b.author a WHERE a.id = :authorId AND g.id = :genreId")
-    Optional<List<Book>> findByAuthorIdAndGenreId(@Param("authorId") Long authorId,
-                                        @Param("genreId") Long genreId);
+    @Query("SELECT b FROM Book b JOIN b.genres g JOIN b.author a "
+            + "WHERE a.id = :authorId AND g.id = :genreId")
+    Optional<List<Book>> findByAuthorIdAndGenreId(
+            @Param("authorId") Long authorId,
+            @Param("genreId") Long genreId);
 }

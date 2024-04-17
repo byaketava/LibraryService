@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class LoggingAspect {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+            LoggingAspect.class);
 
     @Pointcut("execution(public * by.byak.library.service.*.*(..))")
     public void logServiceMethods() {
@@ -19,7 +20,8 @@ public class LoggingAspect {
     @AfterThrowing(pointcut = "logServiceMethods()", throwing = "exception")
     public void logException(JoinPoint joinPoint, Throwable exception) {
         String methodName = joinPoint.getSignature().getName();
-        LOGGER.error("Exception thrown in method: {} with message: {}", methodName, exception.getMessage());
+        LOGGER.error("Exception thrown in method: {} with message: {}",
+                methodName, exception.getMessage());
     }
 
     @Before("logServiceMethods()")
@@ -29,11 +31,13 @@ public class LoggingAspect {
     }
 
     @Around("logServiceMethods()")
-    public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object logExecutionTime(
+            ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         Object proceed = joinPoint.proceed();
         long executionTime = System.currentTimeMillis() - start;
-        LOGGER.info("{} executed in {}ms", joinPoint.getSignature(), executionTime);
+        LOGGER.info("{} executed in {}ms",
+                joinPoint.getSignature(), executionTime);
         return proceed;
     }
 

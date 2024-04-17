@@ -36,7 +36,9 @@ public class GenreService {
             return genreMapper.apply(cachedGenre);
         }
 
-        Genre genre = genreRepository.findByName(name).orElseThrow(() -> new NotFoundException("The genre with that name has not been found"));
+        Genre genre = genreRepository.findByName(name)
+                .orElseThrow(() -> new NotFoundException(
+                        "The genre with that name has not been found"));
         cache.put(name.hashCode(), genre);
 
         return genreMapper.apply(genre);
@@ -44,7 +46,8 @@ public class GenreService {
 
     public void addGenre(Genre genre) {
         if (genreRepository.existsByName(genre.getName())) {
-            throw new AlreadyExistsException("The genre with that name already exists");
+            throw new AlreadyExistsException(
+                    "The genre with that name already exists");
         }
 
         try {
@@ -55,7 +58,9 @@ public class GenreService {
     }
 
     public void deleteGenreById(Long id) {
-        Genre genre = genreRepository.findById(id).orElseThrow(() -> new NotFoundException("The genre with that id has not been found"));
+        Genre genre = genreRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(
+                        "The genre with that id has not been found"));
 
         for (Book book : genre.getBooks()) {
             book.getGenres().remove(genre);
@@ -72,7 +77,9 @@ public class GenreService {
     }
 
     public void updateGenre(Long id, Genre genre) {
-        Genre existingGenre = genreRepository.findById(id).orElseThrow(() -> new NotFoundException("The genre with that id has not been found"));
+        Genre existingGenre = genreRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(
+                        "The genre with that id has not been found"));
         cache.remove(genre.getName().hashCode());
 
         existingGenre.setName(genre.getName());

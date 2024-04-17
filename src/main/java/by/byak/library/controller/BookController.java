@@ -18,9 +18,10 @@ public class BookController {
     private static final String SUCCESS = "Completed successfully";
 
     @GetMapping("/findByAuthorAndGenre")
-    public ResponseEntity<List<BookDTO>> findByAuthorIdAndGenreId(@RequestParam Long authorId,
-                                                                  @RequestParam Long genreId) {
-        List<BookDTO> books = service.findByAuthorIdAndGenreId(authorId, genreId);
+    public ResponseEntity<List<BookDTO>> findByAuthorIdAndGenreId(
+            @RequestParam Long authorId, @RequestParam Long genreId) {
+        List<BookDTO> books = service
+                .findByAuthorIdAndGenreId(authorId, genreId);
         return ResponseEntity.ok(books);
     }
 
@@ -30,7 +31,7 @@ public class BookController {
     }
 
     @GetMapping("/find")
-    public ResponseEntity<BookDTO> findBookByTitle (@RequestParam String title) {
+    public ResponseEntity<BookDTO> findBookByTitle(@RequestParam String title) {
         BookDTO book = service.findBookByTitle(title);
         return ResponseEntity.ok(book);
     }
@@ -42,7 +43,7 @@ public class BookController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteBookById (@RequestParam Long id) {
+    public ResponseEntity<String> deleteBookById(@RequestParam Long id) {
         service.deleteBookById(id);
         return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
     }

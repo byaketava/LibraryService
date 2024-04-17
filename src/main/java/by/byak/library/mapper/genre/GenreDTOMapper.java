@@ -12,7 +12,8 @@ import java.util.function.Function;
 public class GenreDTOMapper implements Function<Genre, GenreDTO> {
     @Override
     public GenreDTO apply(Genre genre) {
-        List<BookTitleDTO> bookTitles = genre.getBooks().stream().map(book -> new BookTitleDTO(book.getTitle())).toList();
+        List<BookTitleDTO> bookTitles = genre.getBooks().stream()
+                .map(book -> new BookTitleDTO(book.getTitle())).toList();
 
         return new GenreDTO(genre.getId(), genre.getName(), bookTitles);
     }

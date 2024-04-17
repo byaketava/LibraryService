@@ -14,7 +14,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="title", unique = true)
+    @Column(name = "title", unique = true)
     private String title;
 
     @ManyToMany(cascade = {CascadeType.MERGE})

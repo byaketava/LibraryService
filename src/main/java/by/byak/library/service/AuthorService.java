@@ -33,7 +33,9 @@ public class AuthorService {
             return authorMapper.apply(cachedAuthor);
         }
 
-        Author author = authorRepository.findByName(name).orElseThrow(() -> new NotFoundException("The author with that name has not been found"));
+        Author author = authorRepository.findByName(name)
+                .orElseThrow(() -> new NotFoundException(
+                        "The author with that name has not been found"));
         cache.put(name.hashCode(), author);
 
         return authorMapper.apply(author);
@@ -41,7 +43,8 @@ public class AuthorService {
 
     public void addAuthor(Author author) {
         if (authorRepository.existsByName(author.getName())) {
-            throw new AlreadyExistsException("The author with that name already exists");
+            throw new AlreadyExistsException(
+                    "The author with that name already exists");
         }
 
         try {
@@ -52,13 +55,17 @@ public class AuthorService {
     }
 
     public void deleteAuthorById(Long id) {
-        Author author = authorRepository.findById(id).orElseThrow(() -> new NotFoundException("The author with that id has not been found"));
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(
+                        "The author with that id has not been found"));
         authorRepository.delete(author);
         cache.remove(author.getName().hashCode());
     }
 
     public void updateAuthor(Long id, Author author) {
-        Author existingAuthor = authorRepository.findById(id).orElseThrow(() -> new NotFoundException("The author with that id has not been found"));
+        Author existingAuthor = authorRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(
+                        "The author with that id has not been found"));
         cache.remove(author.getName().hashCode());
 
         existingAuthor.setName(author.getName());

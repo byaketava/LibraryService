@@ -41,7 +41,8 @@ public class GenreController {
     }
 
     @PutMapping("/update")
-    ResponseEntity<String> updateGenre(@RequestParam Long id, @RequestBody Genre genre) {
+    ResponseEntity<String> updateGenre(@RequestParam Long id,
+                                       @RequestBody Genre genre) {
         service.updateGenre(id, genre);
         return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
     }
