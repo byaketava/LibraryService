@@ -31,13 +31,9 @@ public class LoggingAspect {
     @Around("logServiceMethods()")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
-
         Object proceed = joinPoint.proceed();
-
         long executionTime = System.currentTimeMillis() - start;
-
         LOGGER.info("{} executed in {}ms", joinPoint.getSignature(), executionTime);
-
         return proceed;
     }
 
@@ -46,8 +42,4 @@ public class LoggingAspect {
         String methodName = joinPoint.getSignature().getName();
         LOGGER.info("Method return: {} returned {}", methodName, result);
     }
-
-
-
-
 }
