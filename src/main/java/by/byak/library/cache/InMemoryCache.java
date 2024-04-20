@@ -3,7 +3,6 @@ package by.byak.library.cache;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class InMemoryCache<K, V> {
   private final ConcurrentHashMap<K, V> cache = new ConcurrentHashMap<>();
