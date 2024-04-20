@@ -153,7 +153,6 @@ class GenreServiceTest {
     verify(genreRepository, times(1)).save(genre);
   }
 
-
   @Test
   void testDeleteGenreByIdNotFound() {
     Long genreId = 1L;

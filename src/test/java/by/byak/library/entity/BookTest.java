@@ -8,13 +8,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookTest {
+class BookTest {
 
   private Book book;
   private Author author;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     book = new Book();
     book.setId(1L);
     book.setTitle("Test Book");
@@ -27,34 +27,34 @@ public class BookTest {
   }
 
   @Test
-  public void testGetId() {
+  void testGetId() {
     assertEquals(1L, book.getId());
   }
 
   @Test
-  public void testSetId() {
+  void testSetId() {
     book.setId(2L);
     assertEquals(2L, book.getId());
   }
 
   @Test
-  public void testGetTitle() {
+  void testGetTitle() {
     assertEquals("Test Book", book.getTitle());
   }
 
   @Test
-  public void testSetTitle() {
+  void testSetTitle() {
     book.setTitle("New Title");
     assertEquals("New Title", book.getTitle());
   }
 
   @Test
-  public void testGetAuthor() {
+  void testGetAuthor() {
     assertEquals(author, book.getAuthor());
   }
 
   @Test
-  public void testSetAuthor() {
+  void testSetAuthor() {
     Author newAuthor = new Author();
     newAuthor.setId(2L);
     newAuthor.setName("New Author");
@@ -64,13 +64,13 @@ public class BookTest {
   }
 
   @Test
-  public void testGetGenres() {
+  void testGetGenres() {
     assertNotNull(book.getGenres());
     assertTrue(book.getGenres().isEmpty());
   }
 
   @Test
-  public void testSetGenres() {
+  void testSetGenres() {
     Genre genre1 = new Genre();
     genre1.setId(1L);
     genre1.setName("Genre 1");

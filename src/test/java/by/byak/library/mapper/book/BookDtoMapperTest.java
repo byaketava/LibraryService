@@ -13,10 +13,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class BookDtoMapperTest {
+class BookDtoMapperTest {
 
   @Test
-  public void testBookDtoMapper() {
+  void testBookDtoMapper() {
     Author author = Mockito.mock(Author.class);
     when(author.getName()).thenReturn("John Doe");
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GenreTest {
+class GenreTest {
 
   private Genre genre;
   private Book book1;
@@ -35,36 +35,36 @@ public class GenreTest {
   }
 
   @Test
-  public void testGetId() {
+  void testGetId() {
     assertEquals(1L, genre.getId());
   }
 
   @Test
-  public void testSetId() {
+  void testSetId() {
     genre.setId(2L);
     assertEquals(2L, genre.getId());
   }
 
   @Test
-  public void testGetName() {
+  void testGetName() {
     assertEquals("Test Genre", genre.getName());
   }
 
   @Test
-  public void testSetName() {
+  void testSetName() {
     genre.setName("New Genre");
     assertEquals("New Genre", genre.getName());
   }
 
   @Test
-  public void testGetBooks() {
+  void testGetBooks() {
     assertEquals(2, genre.getBooks().size());
     assertTrue(genre.getBooks().contains(book1));
     assertTrue(genre.getBooks().contains(book2));
   }
 
   @Test
-  public void testSetBooks() {
+  void testSetBooks() {
     Book newBook = new Book();
     newBook.setId(3L);
     newBook.setTitle("Book 3");

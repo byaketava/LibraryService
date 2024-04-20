@@ -8,10 +8,10 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class GenreNameDtoMapperTest {
+class GenreNameDtoMapperTest {
 
   @Test
-  public void testGenreNameDtoMapper() {
+  void testGenreNameDtoMapper() {
     Genre genre = Mockito.mock(Genre.class);
     when(genre.getName()).thenReturn("Genre Name");
 

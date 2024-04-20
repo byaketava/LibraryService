@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class AuthorControllerTest {
+class AuthorControllerTest {
 
   private AuthorController authorController;
 
@@ -30,7 +30,7 @@ public class AuthorControllerTest {
   }
 
   @Test
-  public void testFindAllAuthors() {
+  void testFindAllAuthors() {
     List<AuthorDto> authorDtos = new ArrayList<>();
     when(authorService.findAllAuthors()).thenReturn(authorDtos);
 
@@ -42,7 +42,7 @@ public class AuthorControllerTest {
   }
 
   @Test
-  public void testFindByName() {
+  void testFindByName() {
     String name = "Test Author";
 
     AuthorDto authorDto = new AuthorDto();
@@ -56,7 +56,7 @@ public class AuthorControllerTest {
   }
 
   @Test
-  public void testAddAuthor() {
+  void testAddAuthor() {
     Author author = new Author();
 
     ResponseEntity<String> response = authorController.addAuthor(author);
@@ -67,7 +67,7 @@ public class AuthorControllerTest {
   }
 
   @Test
-  public void testDeleteAuthorById() {
+  void testDeleteAuthorById() {
     Long id = 1L;
 
     ResponseEntity<String> response = authorController.deleteAuthorById(id);
@@ -78,7 +78,7 @@ public class AuthorControllerTest {
   }
 
   @Test
-  public void testUpdateAuthor() {
+  void testUpdateAuthor() {
     Long id = 1L;
     Author author = new Author();
 

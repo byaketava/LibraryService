@@ -5,17 +5,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class InMemoryCacheTest {
+class InMemoryCacheTest {
 
   private InMemoryCache<String, Integer> cache;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     cache = new InMemoryCache<>();
   }
 
   @Test
-  public void testGet() {
+  void testGet() {
     cache.put("key", 1);
 
     Integer value = cache.get("key");
@@ -24,7 +24,7 @@ public class InMemoryCacheTest {
   }
 
   @Test
-  public void testPut() {
+  void testPut() {
     cache.put("key", 1);
 
     Integer value = cache.get("key");
@@ -33,7 +33,7 @@ public class InMemoryCacheTest {
   }
 
   @Test
-  public void testRemove() {
+  void testRemove() {
     cache.put("key", 1);
 
     cache.remove("key");
@@ -42,7 +42,7 @@ public class InMemoryCacheTest {
   }
 
   @Test
-  public void testClear() {
+  void testClear() {
     cache.put("key1", 1);
     cache.put("key2", 2);
 

@@ -6,17 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class BookTitleDtoTest {
+class BookTitleDtoTest {
 
   @Test
-  public void testAllArgsConstructor() {
+  void testAllArgsConstructor() {
     BookTitleDto bookTitleDto = new BookTitleDto("Book Title");
 
     assertEquals("Book Title", bookTitleDto.getTitle());
   }
 
   @Test
-  public void testNoArgsConstructor() {
+  void testNoArgsConstructor() {
     BookTitleDto bookTitleDto = new BookTitleDto();
 
     assertNotNull(bookTitleDto);
@@ -24,7 +24,7 @@ public class BookTitleDtoTest {
   }
 
   @Test
-  public void testSetterGetter() {
+  void testSetterGetter() {
     BookTitleDto bookTitleDto = new BookTitleDto();
 
     bookTitleDto.setTitle("Book Title");

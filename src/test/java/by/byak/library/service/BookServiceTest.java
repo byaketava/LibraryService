@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-public class BookServiceTest {
+class BookServiceTest {
 
   @Mock
   private BookRepository bookRepository;
@@ -42,7 +42,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testFindAllBooks() {
+  void testFindAllBooks() {
     List<Book> books = new ArrayList<>();
     books.add(new Book());
     books.add(new Book());
@@ -66,7 +66,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testFindBookByTitle_BookFoundInCache() {
+  void testFindBookByTitle_BookFoundInCache() {
     String title = "Test Book";
     Book cachedBook = new Book();
     cachedBook.setTitle(title);
@@ -87,7 +87,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testFindBookByTitle_BookNotFound() {
+  void testFindBookByTitle_BookNotFound() {
     String title = "Non-existent Book";
 
     when(cache.get(title.hashCode())).thenReturn(null);
@@ -100,7 +100,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testFindByAuthorIdAndGenreId_BooksFound() {
+  void testFindByAuthorIdAndGenreId_BooksFound() {
     Long authorId = 1L;
     Long genreId = 2L;
 
@@ -124,7 +124,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testFindByAuthorIdAndGenreId_BooksNotFound() {
+  void testFindByAuthorIdAndGenreId_BooksNotFound() {
     Long authorId = 1L;
     Long genreId = 2L;
 
@@ -138,7 +138,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testAddBook_BookDoesNotExist() {
+  void testAddBook_BookDoesNotExist() {
     Book book = new Book();
     book.setTitle("New Book");
 
@@ -151,7 +151,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testAddBook_BookAlreadyExists() {
+  void testAddBook_BookAlreadyExists() {
     Book book = new Book();
     book.setTitle("ExistingBook");
 
@@ -164,7 +164,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testDeleteBookById_BookExists() {
+  void testDeleteBookById_BookExists() {
     Long id = 1L;
     String title = "Test Book";
     Book book = new Book();
@@ -181,7 +181,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testDeleteBookById_BookNotFound() {
+  void testDeleteBookById_BookNotFound() {
     Long id = 1L;
 
     when(bookRepository.findById(id)).thenReturn(Optional.empty());
@@ -194,7 +194,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testUpdateBook_BookNotFound() {
+  void testUpdateBook_BookNotFound() {
     Long id = 1L;
     Book book = new Book();
 
@@ -208,7 +208,7 @@ public class BookServiceTest {
   }
 
   @Test
-  public void testAddBook_ExceptionWhileSavingBook() {
+  void testAddBook_ExceptionWhileSavingBook() {
     Book book = new Book();
     book.setTitle("New Book");
 

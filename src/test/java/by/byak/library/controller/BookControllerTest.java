@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class BookControllerTest {
+class BookControllerTest {
 
   private BookController bookController;
 
@@ -30,7 +30,7 @@ public class BookControllerTest {
   }
 
   @Test
-  public void testFindByAuthorIdAndGenreId() {
+  void testFindByAuthorIdAndGenreId() {
     Long authorId = 1L;
     Long genreId = 2L;
 
@@ -46,7 +46,7 @@ public class BookControllerTest {
   }
 
   @Test
-  public void testFindAllBooks() {
+  void testFindAllBooks() {
     List<BookDto> books = new ArrayList<>();
     when(bookService.findAllBooks()).thenReturn(books);
 
@@ -58,7 +58,7 @@ public class BookControllerTest {
   }
 
   @Test
-  public void testFindBookByTitle() {
+  void testFindBookByTitle() {
     String title = "Test Book";
 
     BookDto bookDto = new BookDto();
@@ -72,7 +72,7 @@ public class BookControllerTest {
   }
 
   @Test
-  public void testAddBook() {
+  void testAddBook() {
     Book book = new Book();
 
     ResponseEntity<String> response = bookController.addBook(book);
@@ -83,7 +83,7 @@ public class BookControllerTest {
   }
 
   @Test
-  public void testDeleteBookById() {
+  void testDeleteBookById() {
     Long id = 1L;
 
     ResponseEntity<String> response = bookController.deleteBookById(id);
@@ -94,7 +94,7 @@ public class BookControllerTest {
   }
 
   @Test
-  public void testUpdateBook() {
+  void testUpdateBook() {
     Long id = 1L;
     Book book = new Book();
 

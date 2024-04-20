@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class GenreControllerTest {
+class GenreControllerTest {
 
   private GenreController genreController;
 
@@ -30,7 +30,7 @@ public class GenreControllerTest {
   }
 
   @Test
-  public void testFindAllGenres() {
+  void testFindAllGenres() {
     List<GenreDto> genres = new ArrayList<>();
     when(genreService.findAllGenres()).thenReturn(genres);
 
@@ -42,7 +42,7 @@ public class GenreControllerTest {
   }
 
   @Test
-  public void testFindGenreByName() {
+  void testFindGenreByName() {
     String name = "Test Genre";
 
     GenreDto genreDto = new GenreDto();
@@ -56,7 +56,7 @@ public class GenreControllerTest {
   }
 
   @Test
-  public void testAddGenre() {
+  void testAddGenre() {
     Genre genre = new Genre();
 
     ResponseEntity<String> response = genreController.addGenre(genre);
@@ -67,7 +67,7 @@ public class GenreControllerTest {
   }
 
   @Test
-  public void testDeleteGenreById() {
+  void testDeleteGenreById() {
     Long id = 1L;
 
     ResponseEntity<String> response = genreController.deleteGenreById(id);
@@ -78,7 +78,7 @@ public class GenreControllerTest {
   }
 
   @Test
-  public void testUpdateGenre() {
+  void testUpdateGenre() {
     Long id = 1L;
     Genre genre = new Genre();
 

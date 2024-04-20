@@ -8,10 +8,10 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class AuthorNameDtoMapperTest {
+class AuthorNameDtoMapperTest {
 
   @Test
-  public void testAuthorNameDtoMapper() {
+  void testAuthorNameDtoMapper() {
     Author author = Mockito.mock(Author.class);
     when(author.getName()).thenReturn("John Doe");
 

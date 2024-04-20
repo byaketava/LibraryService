@@ -7,10 +7,10 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ExceptionDetailsTest {
+class ExceptionDetailsTest {
 
   @Test
-  public void testExceptionDetailsConstructorWithArgs() {
+  void testExceptionDetailsConstructorWithArgs() {
     Date timestamp = new Date();
 
     ExceptionDetails exceptionDetails =
@@ -22,7 +22,7 @@ public class ExceptionDetailsTest {
   }
 
   @Test
-  public void testExceptionDetailsConstructorWithoutArgs() {
+  void testExceptionDetailsConstructorWithoutArgs() {
     ExceptionDetails exceptionDetails = new ExceptionDetails();
 
     assertNull(exceptionDetails.getTimestamp());
@@ -31,7 +31,7 @@ public class ExceptionDetailsTest {
   }
 
   @Test
-  public void testExceptionDetailsSetters() {
+  void testExceptionDetailsSetters() {
     ExceptionDetails exceptionDetails = new ExceptionDetails();
 
     Date timestamp = new Date();

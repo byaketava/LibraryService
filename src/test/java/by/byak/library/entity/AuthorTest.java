@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AuthorTest {
+class AuthorTest {
 
   private Author author;
 
@@ -19,35 +19,35 @@ public class AuthorTest {
   }
 
   @Test
-  public void testGetId() {
+  void testGetId() {
     assertEquals(1L, author.getId());
   }
 
   @Test
-  public void testSetId() {
+  void testSetId() {
     author.setId(2L);
     assertEquals(2L, author.getId());
   }
 
   @Test
-  public void testGetName() {
+  void testGetName() {
     assertEquals("Test Author", author.getName());
   }
 
   @Test
-  public void testSetName() {
+  void testSetName() {
     author.setName("New Author");
     assertEquals("New Author", author.getName());
   }
 
   @Test
-  public void testGetBooks() {
+  void testGetBooks() {
     assertNotNull(author.getBooks());
     assertTrue(author.getBooks().isEmpty());
   }
 
   @Test
-  public void testSetBooks() {
+  void testSetBooks() {
     Book book1 = new Book();
     book1.setId(1L);
     book1.setTitle("Book 1");

@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AlreadyExistsExceptionTest {
+class AlreadyExistsExceptionTest {
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     AlreadyExistsException exception = new AlreadyExistsException("Item already exists");
 
     assertEquals("Item already exists", exception.getMessage());

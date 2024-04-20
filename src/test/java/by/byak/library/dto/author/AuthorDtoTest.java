@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class AuthorDtoTest {
+class AuthorDtoTest {
 
   @Test
-  public void testAllArgsConstructor() {
+  void testAllArgsConstructor() {
     List<BookTitleDto> books = new ArrayList<>();
     books.add(new BookTitleDto("Book 1"));
     books.add(new BookTitleDto("Book 2"));
@@ -28,7 +28,7 @@ public class AuthorDtoTest {
   }
 
   @Test
-  public void testNoArgsConstructor() {
+  void testNoArgsConstructor() {
     AuthorDto authorDto = new AuthorDto();
 
     assertNotNull(authorDto);
@@ -38,7 +38,7 @@ public class AuthorDtoTest {
   }
 
   @Test
-  public void testSetterGetter() {
+  void testSetterGetter() {
     AuthorDto authorDto = new AuthorDto();
 
     authorDto.setId(1L);

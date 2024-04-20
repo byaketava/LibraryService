@@ -12,10 +12,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class AuthorDtoMapperTest {
+class AuthorDtoMapperTest {
 
   @Test
-  public void testAuthorDtoMapper() {
+  void testAuthorDtoMapper() {
     Author author = Mockito.mock(Author.class);
     when(author.getId()).thenReturn(1L);
     when(author.getName()).thenReturn("John Doe");
