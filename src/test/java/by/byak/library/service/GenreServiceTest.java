@@ -193,7 +193,9 @@ class GenreServiceTest {
     Long genreId = 1L;
     when(genreRepository.findById(genreId)).thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> genreService.updateGenre(genreId, new Genre()));
+    assertThrows(NotFoundException.class, () -> {
+      genreService.updateGenre(genreId, new Genre());
+    });
     verify(genreRepository, times(1)).findById(genreId);
     verify(cache, never()).remove(anyInt());
     verify(genreRepository, never()).save(any(Genre.class));
