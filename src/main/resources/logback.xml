@@ -1,32 +1,19 @@
 <configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>D:\vs\4 sem\Library\src\logfile.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <fileNamePattern>D:\vs\4 sem\Library\src\logfile-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <!-- keep 30 days' worth of history -->
-            <maxHistory>30</maxHistory>
-
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!-- or whenever the file size reaches 100MB -->
-                <maxFileSize>100MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
+        <param name="Append" value="false"/>
         <encoder>
-            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%cyan(%date{yyyy-MM-dd HH:mm:ss.SSS}) [%thread] %highlight(%-5level) %magenta(%logger{36}) - %msg%n</pattern>
-        </encoder>
-
-    </appender>
-
+    <logger name="by.byak.library.aop.LoggingAspect" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
 
     <root level="INFO">
-        <appender-ref ref="FILE"/>
         <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

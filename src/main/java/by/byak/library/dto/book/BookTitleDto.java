@@ -1,4 +1,4 @@
-package by.byak.library.dto.genre;
+package by.byak.library.dto.book;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GenreNameDTO {
-    private String name;
+public class BookTitleDto {
+  private String title;
 }
