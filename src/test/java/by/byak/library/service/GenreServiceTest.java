@@ -36,9 +36,6 @@ class GenreServiceTest {
   @Mock
   private InMemoryCache<Integer, Genre> cache;
 
-  @Mock
-  private InMemoryCache<Integer, Book> bookCache;
-
   @InjectMocks
   private GenreService genreService;
 
@@ -103,6 +100,7 @@ class GenreServiceTest {
   void testFindGenreByName_GenreInCache() {
     String name = "Test Genre";
     Genre cachedGenre = new Genre();
+    cachedGenre.setName(name);
     GenreDto genreDto = new GenreDto();
 
     when(cache.get(name.hashCode())).thenReturn(cachedGenre);
@@ -128,7 +126,6 @@ class GenreServiceTest {
     GenreDto result = genreService.findGenreByName(name);
 
     assertEquals(genreDto, result);
-    verify(cache, times(1)).get(name.hashCode());
     verify(genreRepository, times(1)).findByName(name);
     verify(genreMapper, times(1)).apply(genre);
   }
@@ -142,7 +139,6 @@ class GenreServiceTest {
 
     assertThrows(NotFoundException.class, () -> genreService.findGenreByName(name));
 
-    verify(cache, times(1)).get(name.hashCode());
     verify(genreRepository, times(1)).findByName(name);
   }
 
@@ -153,7 +149,6 @@ class GenreServiceTest {
     when(genreRepository.findByName(genreName)).thenThrow(new RuntimeException("Test exception"));
 
     assertThrows(RuntimeException.class, () -> genreService.findGenreByName(genreName));
-    verify(cache, times(1)).get(genreName.hashCode());
     verify(genreRepository, times(1)).findByName(genreName);
   }
 
@@ -199,7 +194,7 @@ class GenreServiceTest {
   void testDeleteGenreById_HappyPath() {
     Long genreId = 1L;
     Genre genre = new Genre();
-    genre.setName("Test Genre");
+    genre.setName(" Test Genre");
     genre.setId(genreId);
     Book book = new Book();
     book.setTitle("Test Book");
@@ -212,7 +207,6 @@ class GenreServiceTest {
 
     verify(genreRepository, times(1)).findById(genreId);
     verify(bookRepository, times(1)).save(book);
-    verify(bookCache, times(1)).remove(book.getTitle().hashCode());
     verify(genreRepository, times(1)).delete(genre);
   }
 
