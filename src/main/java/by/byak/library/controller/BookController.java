@@ -41,6 +41,13 @@ public class BookController {
     return new ResponseEntity<>(SUCCESS, HttpStatus.CREATED);
   }
 
+  @PostMapping("/addAuthorBooks")
+  public ResponseEntity<String> addBooks(@RequestParam Long id,
+                                         @RequestBody List<Book> books) {
+    service.addBooks(id, books);
+    return new ResponseEntity<>(SUCCESS, HttpStatus.CREATED);
+  }
+
   @DeleteMapping("/delete")
   public ResponseEntity<String> deleteBookById(@RequestParam Long id) {
     service.deleteBookById(id);
