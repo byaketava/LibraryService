@@ -68,7 +68,7 @@ class AuthorTest {
   }
 
   @Test
-  public void testEqualsAndHashCode() {
+  void testEqualsAndHashCode() {
     Author author1 = new Author();
     author1.setName("Test Author");
 
@@ -80,7 +80,7 @@ class AuthorTest {
   }
 
   @Test
-  public void testToString() {
+  void testToString() {
     Author author = new Author();
     author.setName("Test Author");
 

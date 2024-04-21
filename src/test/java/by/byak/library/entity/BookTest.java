@@ -91,7 +91,7 @@ class BookTest {
   }
 
   @Test
-  public void testEqualsAndHashCode() {
+  void testEqualsAndHashCode() {
     Book book1 = new Book();
     book1.setTitle("Test Title");
 
@@ -103,7 +103,7 @@ class BookTest {
   }
 
   @Test
-  public void testToString() {
+  void testToString() {
     Book book = new Book();
     book.setTitle("Test Title");
 

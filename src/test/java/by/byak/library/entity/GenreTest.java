@@ -79,7 +79,7 @@ class GenreTest {
   }
 
   @Test
-  public void testEqualsAndHashCode() {
+  void testEqualsAndHashCode() {
     Genre genre1 = new Genre();
     genre1.setName("Test Genre");
 
@@ -91,7 +91,7 @@ class GenreTest {
   }
 
   @Test
-  public void testToString() {
+  void testToString() {
     Genre genre = new Genre();
     genre.setName("Test Genre");
 

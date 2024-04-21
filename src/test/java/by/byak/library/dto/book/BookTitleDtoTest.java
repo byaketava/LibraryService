@@ -25,7 +25,7 @@ class BookTitleDtoTest {
   }
 
   @Test
-  public void testGetterAndSetter() {
+  void testGetterAndSetter() {
     BookTitleDto bookTitleDto = new BookTitleDto();
 
     bookTitleDto.setTitle("Test Title");
@@ -34,7 +34,7 @@ class BookTitleDtoTest {
   }
 
   @Test
-  public void testEqualsAndHashCode() {
+  void testEqualsAndHashCode() {
     BookTitleDto bookTitleDto1 = new BookTitleDto("Test Title");
     BookTitleDto bookTitleDto2 = new BookTitleDto("Test Title");
 
@@ -43,7 +43,7 @@ class BookTitleDtoTest {
   }
 
   @Test
-  public void testToString() {
+  void testToString() {
     BookTitleDto bookTitleDto = new BookTitleDto("Test Title");
 
     assertTrue(bookTitleDto.toString().contains("Test Title"));
