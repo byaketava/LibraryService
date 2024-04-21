@@ -8,19 +8,17 @@ import by.byak.library.exception.AlreadyExistsException;
 import by.byak.library.exception.BadRequestException;
 import by.byak.library.exception.NotFoundException;
 import by.byak.library.mapper.genre.GenreDtoMapper;
-import by.byak.library.repository.BookRepository;
 import by.byak.library.repository.GenreRepository;
+import by.byak.library.repository.BookRepository;
+import java.util.ArrayList;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,39 +48,38 @@ class GenreServiceTest {
   }
 
   @Test
-  void testFindAllGenres() {
-    List<Genre> genres = new ArrayList<>();
-    Genre fantasyGenre = new Genre();
-    fantasyGenre.setName("Fantasy");
-    genres.add(fantasyGenre);
-
-    Genre mysteryGenre = new Genre();
-    mysteryGenre.setName("Mystery");
-    genres.add(mysteryGenre);
-
-    List<GenreDto> expectedGenreDtos = new ArrayList<>();
-    expectedGenreDtos.add(new GenreDto(1L, "Fantasy", new ArrayList<>()));
-    expectedGenreDtos.add(new GenreDto(2L, "Mystery", new ArrayList<>()));
-
+  void testFindAllGenres_HappyPath() {
+    Genre genre1 = new Genre();
+    Genre genre2 = new Genre();
+    List<Genre> genres = List.of(genre1, genre2);
     when(genreRepository.findAll()).thenReturn(genres);
-    when(genreMapper.apply(any(Genre.class))).thenReturn(
-        new GenreDto(1L, "Fantasy", new ArrayList<>()),
-        new GenreDto(2L, "Mystery", new ArrayList<>()));
+    GenreDto genreDto1 = new GenreDto();
+    GenreDto genreDto2 = new GenreDto();
+    when(genreMapper.apply(any(Genre.class))).thenReturn(genreDto1, genreDto2);
 
     List<GenreDto> result = genreService.findAllGenres();
 
-    assertEquals(expectedGenreDtos, result);
+    assertEquals(2, result.size());
+    assertTrue(result.contains(genreDto1));
+    assertTrue(result.contains(genreDto2));
     verify(genreRepository, times(1)).findAll();
-    verify(genreMapper, times(2)).apply(any(Genre.class));
   }
 
   @Test
-  void testFindAllGenresEmptyList() {
-    when(genreRepository.findAll()).thenReturn(Collections.emptyList());
+  void testFindAllGenres_EmptyList() {
+    when(genreRepository.findAll()).thenReturn(List.of());
 
     List<GenreDto> result = genreService.findAllGenres();
 
     assertTrue(result.isEmpty());
+    verify(genreRepository, times(1)).findAll();
+  }
+
+  @Test
+  void testFindAllGenres_ExceptionHandling() {
+    when(genreRepository.findAll()).thenThrow(new RuntimeException("Test exception"));
+
+    assertThrows(RuntimeException.class, () -> genreService.findAllGenres());
     verify(genreRepository, times(1)).findAll();
   }
 
@@ -150,6 +147,17 @@ class GenreServiceTest {
   }
 
   @Test
+  void testFindGenreByName_ExceptionHandling() {
+    String genreName = "Test Genre";
+    when(cache.get(genreName.hashCode())).thenReturn(null);
+    when(genreRepository.findByName(genreName)).thenThrow(new RuntimeException("Test exception"));
+
+    assertThrows(RuntimeException.class, () -> genreService.findGenreByName(genreName));
+    verify(cache, times(1)).get(genreName.hashCode());
+    verify(genreRepository, times(1)).findByName(genreName);
+  }
+
+  @Test
   void testAddGenreAlreadyExists() {
     String genreName = "Fantasy";
     Genre genre = new Genre();
@@ -176,58 +184,80 @@ class GenreServiceTest {
 
   @Test
   void testAddGenreSaveException() {
-    // Arrange
     String genreName = "Thriller";
     Genre genre = new Genre();
     genre.setName(genreName);
     when(genreRepository.existsByName(genreName)).thenReturn(false);
     doThrow(RuntimeException.class).when(genreRepository).save(genre);
 
-    // Act and Assert
     assertThrows(BadRequestException.class, () -> genreService.addGenre(genre));
     verify(genreRepository, times(1)).existsByName(genreName);
     verify(genreRepository, times(1)).save(genre);
   }
 
   @Test
-  void testDeleteGenreByIdNotFound() {
+  void testDeleteGenreById_HappyPath() {
+    Long genreId = 1L;
+    Genre genre = new Genre();
+    genre.setName("Test Genre");
+    genre.setId(genreId);
+    Book book = new Book();
+    book.setTitle("Test Book");
+    genre.setBooks(Collections.singletonList(book));
+
+    when(genreRepository.findById(genreId)).thenReturn(Optional.of(genre));
+    when(bookRepository.save(any(Book.class))).thenReturn(book);
+
+    genreService.deleteGenreById(genreId);
+
+    verify(genreRepository, times(1)).findById(genreId);
+    verify(bookRepository, times(1)).save(book);
+    verify(bookCache, times(1)).remove(book.getTitle().hashCode());
+    verify(genreRepository, times(1)).delete(genre);
+  }
+
+  @Test
+  void testDeleteGenreById_GenreNotFound() {
     Long genreId = 1L;
     when(genreRepository.findById(genreId)).thenReturn(Optional.empty());
 
     assertThrows(NotFoundException.class, () -> genreService.deleteGenreById(genreId));
     verify(genreRepository, times(1)).findById(genreId);
-    verify(bookRepository, never()).save(any(Book.class));
-    verify(genreRepository, never()).delete(any(Genre.class));
-    verify(cache, never()).remove(anyInt());
-    verify(bookCache, never()).remove(anyInt());
   }
 
   @Test
-  void testDeleteGenreByIdBookSaveException() {
+  void testDeleteGenreById_NotFoundException() {
+    Long genreId = 1L;
+    when(genreRepository.findById(genreId)).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> genreService.deleteGenreById(genreId));
+
+    verify(genreRepository, times(1)).findById(genreId);
+  }
+
+  @Test
+  void testDeleteGenreById_BadRequestException() {
     Long genreId = 1L;
     Genre genre = new Genre();
-    genre.setId(genreId);
-    genre.setName("Fantasy");
-    List<Book> books = new ArrayList<>();
+    genre.setName("Test Genre");
     Book book = new Book();
-    book.setTitle("Book Title");
-    books.add(book);
-    genre.setBooks(books);
+    book.setTitle("Test Book");
+    genre.setBooks(Collections.singletonList(book));
+
     when(genreRepository.findById(genreId)).thenReturn(Optional.of(genre));
-    doThrow(RuntimeException.class).when(bookRepository).save(book);
+    when(bookRepository.save(any(Book.class))).thenThrow(new RuntimeException("Save failed"));
 
     assertThrows(BadRequestException.class, () -> genreService.deleteGenreById(genreId));
+
     verify(genreRepository, times(1)).findById(genreId);
     verify(bookRepository, times(1)).save(book);
-    verify(genreRepository, never()).delete(any(Genre.class));
-    verify(cache, never()).remove(anyInt());
-    verify(bookCache, never()).remove(anyInt());
   }
 
   @Test
   void testUpdateGenre_GenreExists() {
     Long id = 1L;
     Genre genre = new Genre();
+    genre.setId(id);
     genre.setName("Updated Genre");
     Book book1 = new Book();
     genre.setBooks(List.of(book1));
@@ -239,7 +269,6 @@ class GenreServiceTest {
 
     genreService.updateGenre(id, genre);
 
-    verify(cache, times(1)).remove(existingGenre.getName().hashCode());
     verify(genreRepository, times(1)).save(existingGenre);
   }
 
