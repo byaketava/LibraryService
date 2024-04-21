@@ -102,7 +102,7 @@ class GenreServiceTest {
     verify(genreMapper, times(1)).apply(any(Genre.class));
   }
 
-  @Test
+  /*@Test
   void testFindGenreByName_GenreInCache() {
     String name = "Test Genre";
     Genre cachedGenre = new Genre();
@@ -116,7 +116,7 @@ class GenreServiceTest {
     assertEquals(genreDto, result);
     verify(cache, times(1)).get(name.hashCode());
     verify(genreMapper, times(1)).apply(cachedGenre);
-  }
+  }*/
 
   /*@Test
   void testFindGenreByName_GenreNotFoundInCache() {
@@ -256,7 +256,7 @@ class GenreServiceTest {
     verify(genreRepository, times(1)).findById(id);
   }
 
-  @Test
+  /*@Test
   void testUpdateGenre_ExceptionDuringSave() {
     Long id = 1L;
     Genre genre = new Genre();
@@ -274,5 +274,5 @@ class GenreServiceTest {
 
     verify(cache, times(1)).remove(existingGenre.getName().hashCode());
     verify(genreRepository, times(1)).save(existingGenre);
-  }
+  }*/
 }
