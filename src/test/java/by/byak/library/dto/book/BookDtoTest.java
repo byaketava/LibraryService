@@ -67,4 +67,24 @@ class BookDtoTest {
     Assertions.assertEquals("Genre 2", bookDto.getGenres().get(1).getName());
     Assertions.assertEquals("John Doe", bookDto.getAuthor().getName());
   }
+
+  @Test
+  void testEqualsAndHashCode() {
+    BookDto book1 = new BookDto(1L, "Book 1", List.of(new GenreNameDto("Fiction")), new AuthorNameDto("John Doe"));
+    BookDto book2 = new BookDto(1L, "Book 1", List.of(new GenreNameDto("Fiction")), new AuthorNameDto("John Doe"));
+    BookDto book3 = new BookDto(2L, "Book 2", List.of(new GenreNameDto("Fantasy")), new AuthorNameDto("Jane Doe"));
+
+    Assertions.assertEquals(book1, book2);
+    Assertions.assertNotEquals(book1, book3);
+
+    Assertions.assertEquals(book1.hashCode(), book2.hashCode());
+    Assertions.assertNotEquals(book1.hashCode(), book3.hashCode());
+  }
+
+  @Test
+  void testToString() {
+    BookDto book = new BookDto(1L, "Test Book", List.of(new GenreNameDto("Fiction")), new AuthorNameDto("John Doe"));
+    String expectedToString = "BookDto(id=1, title=Test Book, genres=[GenreNameDto(name=Fiction)], author=AuthorNameDto(name=John Doe))";
+    Assertions.assertEquals(expectedToString, book.toString());
+  }
 }

@@ -3,10 +3,14 @@ package by.byak.library.service;
 import by.byak.library.cache.InMemoryCache;
 import by.byak.library.dto.author.AuthorDto;
 import by.byak.library.entity.Author;
+import by.byak.library.entity.Book;
 import by.byak.library.exception.AlreadyExistsException;
+import by.byak.library.exception.BadRequestException;
 import by.byak.library.exception.NotFoundException;
 import by.byak.library.mapper.author.AuthorDtoMapper;
 import by.byak.library.repository.AuthorRepository;
+import java.util.Arrays;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -80,30 +84,50 @@ class AuthorServiceTest {
   }
 
   @Test
-  void testFindByName() {
-    Author author = new Author();
-    author.setName("Test Author");
-
+  void testFindByName_AuthorInCache() {
+    String name = "Test Author";
+    Author cachedAuthor = new Author();
     AuthorDto authorDto = new AuthorDto();
-    authorDto.setName("Test Author DTO");
 
-    when(cache.get(anyInt())).thenReturn(null);
+    when(cache.get(name.hashCode())).thenReturn(cachedAuthor);
+    when(authorMapper.apply(cachedAuthor)).thenReturn(authorDto);
 
-    when(authorRepository.findByName("Test Author")).thenReturn(Optional.of(author));
-
-    when(authorMapper.apply(author)).thenReturn(authorDto);
-
-    AuthorDto result = authorService.findByName("Test Author");
+    AuthorDto result = authorService.findByName(name);
 
     assertEquals(authorDto, result);
+    verify(cache, times(1)).get(name.hashCode());
+    verify(authorMapper, times(1)).apply(cachedAuthor);
+  }
 
-    verify(cache, times(1)).get(anyInt());
+  @Test
+  void testFindByName_AuthorNotFoundInCache() {
+    String name = "Test Author";
+    Author author = new Author();
+    AuthorDto authorDto = new AuthorDto();
 
-    verify(authorRepository, times(1)).findByName("Test Author");
+    when(cache.get(name.hashCode())).thenReturn(null);
+    when(authorRepository.findByName(name)).thenReturn(Optional.of(author));
+    when(authorMapper.apply(author)).thenReturn(authorDto);
 
-    verify(cache, times(1)).put(anyInt(), eq(author));
+    AuthorDto result = authorService.findByName(name);
 
+    assertEquals(authorDto, result);
+    verify(cache, times(1)).get(name.hashCode());
+    verify(authorRepository, times(1)).findByName(name);
     verify(authorMapper, times(1)).apply(author);
+  }
+
+  @Test
+  void testFindByName_AuthorNotFoundInRepository() {
+    String name = "Test Author";
+
+    when(cache.get(name.hashCode())).thenReturn(null);
+    when(authorRepository.findByName(name)).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> authorService.findByName(name));
+
+    verify(cache, times(1)).get(name.hashCode());
+    verify(authorRepository, times(1)).findByName(name);
   }
 
   @Test
@@ -120,6 +144,20 @@ class AuthorServiceTest {
   }
 
   @Test
+  void testAddAuthor_ExceptionDuringSave() {
+    Author author = new Author();
+    author.setName("Test Author");
+
+    when(authorRepository.existsByName(author.getName())).thenReturn(false);
+
+    doThrow(new RuntimeException("Save failed")).when(authorRepository).save(author);
+
+    assertThrows(InternalError.class, () -> authorService.addAuthor(author));
+
+    verify(authorRepository, times(1)).save(author);
+  }
+
+  @Test
   void testAddAuthor_AlreadyExists() {
     Author author = new Author();
     author.setName("Test Author");
@@ -130,6 +168,18 @@ class AuthorServiceTest {
 
     verify(authorRepository, times(1)).existsByName("Test Author");
     verify(authorRepository, never()).save(author);
+  }
+
+  @Test
+  void testAddAuthor_AuthorDoesNotExist() {
+    Author author = new Author();
+    author.setName("Test Author");
+
+    when(authorRepository.existsByName(author.getName())).thenReturn(false);
+
+    authorService.addAuthor(author);
+
+    verify(authorRepository, times(1)).save(author);
   }
 
   @Test
@@ -161,24 +211,24 @@ class AuthorServiceTest {
   }
 
   @Test
-  void testUpdateAuthor() {
+  void testUpdateAuthor_AuthorExists() {
+    Long id = 1L;
+    Author author = new Author();
+    author.setName("Updated Name");
+    author.setBooks(Collections.singletonList(new Book()));
+
     Author existingAuthor = new Author();
-    existingAuthor.setId(1L);
-    existingAuthor.setName("Existing Author");
+    existingAuthor.setName("Old Name");
+    existingAuthor.setBooks(Collections.singletonList(new Book()));
 
-    Author updatedAuthor = new Author();
-    updatedAuthor.setName("Updated Author");
+    when(authorRepository.findById(id)).thenReturn(Optional.of(existingAuthor));
 
-    when(authorRepository.findById(1L)).thenReturn(Optional.of(existingAuthor));
+    authorService.updateAuthor(id, author);
 
-    authorService.updateAuthor(1L, updatedAuthor);
-
-    verify(authorRepository, times(1)).findById(1L);
+    assertEquals(author.getName(), existingAuthor.getName());
+    assertEquals(author.getBooks(), existingAuthor.getBooks());
+    verify(cache, times(1)).remove(author.getName().hashCode());
     verify(authorRepository, times(1)).save(existingAuthor);
-
-    verify(cache, times(1)).remove(existingAuthor.getName().hashCode());
-
-    assertEquals(updatedAuthor.getName(), existingAuthor.getName());
   }
 
   @Test
@@ -194,5 +244,45 @@ class AuthorServiceTest {
     verify(authorRepository, never()).save(any());
 
     verify(cache, never()).remove(anyInt());
+  }
+
+  @Test
+  void testUpdateAuthor_BooksAuthorSetCorrectly() {
+    Long id = 1L;
+    Author author = new Author();
+    author.setName("Updated Name"); // Ensure the name is not null
+    Book book1 = new Book();
+    Book book2 = new Book();
+    author.setBooks(Arrays.asList(book1, book2));
+
+    Author existingAuthor = new Author();
+    existingAuthor.setName("Old Name");
+
+    when(authorRepository.findById(id)).thenReturn(Optional.of(existingAuthor));
+
+    authorService.updateAuthor(id, author);
+
+    assertEquals(existingAuthor, book1.getAuthor());
+    assertEquals(existingAuthor, book2.getAuthor());
+    verify(cache, times(1)).remove(author.getName().hashCode());
+    verify(authorRepository, times(1)).save(existingAuthor);
+  }
+
+  @Test
+  void testUpdateAuthor_ExceptionDuringSave() {
+    Long id = 1L;
+    Author author = new Author();
+    author.setName("Updated Name");
+
+    Author existingAuthor = new Author();
+    existingAuthor.setName("Old Name");
+
+    when(authorRepository.findById(id)).thenReturn(Optional.of(existingAuthor));
+    doThrow(new RuntimeException("Save failed")).when(authorRepository).save(existingAuthor);
+
+    assertThrows(BadRequestException.class, () -> authorService.updateAuthor(id, author));
+
+    verify(cache, times(1)).remove(author.getName().hashCode());
+    verify(authorRepository, times(1)).save(existingAuthor);
   }
 }

@@ -2,12 +2,16 @@ package by.byak.library.service;
 
 import by.byak.library.cache.InMemoryCache;
 import by.byak.library.dto.book.BookDto;
+import by.byak.library.entity.Author;
 import by.byak.library.entity.Book;
+import by.byak.library.entity.Genre;
 import by.byak.library.exception.AlreadyExistsException;
 import by.byak.library.exception.BadRequestException;
 import by.byak.library.exception.NotFoundException;
 import by.byak.library.mapper.book.BookDtoMapper;
 import by.byak.library.repository.BookRepository;
+import java.util.Collections;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -87,16 +91,32 @@ class BookServiceTest {
   }
 
   @Test
-  void testFindBookByTitle_BookNotFound() {
-    String title = "Non-existent Book";
+  void testFindBookByTitle_BookNotFoundInCache() {
+    String title = "Test Book";
+    Book book = new Book();
+    BookDto bookDto = new BookDto();
 
     when(cache.get(title.hashCode())).thenReturn(null);
-    when(bookRepository.findByTitle(title)).thenReturn(Optional.empty());
+    when(bookRepository.findByTitle(title)).thenReturn(Optional.of(book));
+    when(bookMapper.apply(book)).thenReturn(bookDto);
 
-    assertThrows(NotFoundException.class, () -> bookService.findBookByTitle(title));
+    BookDto result = bookService.findBookByTitle(title);
 
+    assertEquals(bookDto, result);
     verify(cache, times(1)).get(title.hashCode());
     verify(bookRepository, times(1)).findByTitle(title);
+    verify(bookMapper, times(1)).apply(book);
+  }
+
+  @Test
+  void testFindBookByTitle_BookNotFoundInRepository() {
+    String title = "The Great Gatsby";
+    when(bookRepository.findByTitle(title)).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(NotFoundException.class, () -> bookService.findBookByTitle(title));
+
+    verify(bookRepository, times(1)).findByTitle(title);
+    Assertions.assertNull(cache.get(title.hashCode()));
   }
 
   @Test
@@ -194,6 +214,38 @@ class BookServiceTest {
   }
 
   @Test
+  void testAddBook_ExceptionWhileSavingBook() {
+    Book book = new Book();
+    book.setTitle("New Book");
+
+    when(bookRepository.existsByTitle(book.getTitle())).thenReturn(false);
+    doThrow(BadRequestException.class).when(bookRepository).save(book);
+
+    assertThrows(BadRequestException.class, () -> bookService.addBook(book));
+
+    verify(bookRepository, times(1)).existsByTitle(book.getTitle());
+    verify(bookRepository, times(1)).save(book);
+  }
+
+  @Test
+  void testUpdateBook_ExceptionDuringSave() {
+    Long id = 1L;
+    Book book = new Book();
+    book.setTitle("Updated Title");
+
+    Book existingBook = new Book();
+    existingBook.setTitle("Old Title");
+
+    when(bookRepository.findById(id)).thenReturn(Optional.of(existingBook));
+    doThrow(new RuntimeException("Save failed")).when(bookRepository).save(existingBook);
+
+    assertThrows(BadRequestException.class, () -> bookService.updateBook(id, book));
+
+    verify(cache, times(1)).remove(book.getTitle().hashCode());
+    verify(bookRepository, times(1)).save(existingBook);
+  }
+
+  @Test
   void testUpdateBook_BookNotFound() {
     Long id = 1L;
     Book book = new Book();
@@ -208,16 +260,29 @@ class BookServiceTest {
   }
 
   @Test
-  void testAddBook_ExceptionWhileSavingBook() {
-    Book book = new Book();
-    book.setTitle("New Book");
+  void testUpdateBook_BookExists() {
+    Long id = 1L;
+    List<Genre> genres = Collections.singletonList(new Genre());
+    Author author = new Author();
 
-    when(bookRepository.existsByTitle(book.getTitle())).thenReturn(false);
-    doThrow(BadRequestException.class).when(bookRepository).save(book);
+    Book inputBook = new Book();
+    inputBook.setTitle("Updated Title");
+    inputBook.setAuthor(author);
+    inputBook.setGenres(genres);
 
-    assertThrows(BadRequestException.class, () -> bookService.addBook(book));
+    Book existingBook = new Book();
+    existingBook.setTitle("Old Title");
+    existingBook.setAuthor(new Author());
+    existingBook.setGenres(Collections.singletonList(new Genre()));
 
-    verify(bookRepository, times(1)).existsByTitle(book.getTitle());
-    verify(bookRepository, times(1)).save(book);
+    when(bookRepository.findById(id)).thenReturn(Optional.of(existingBook));
+
+    bookService.updateBook(id, inputBook);
+
+    assertEquals(inputBook.getTitle(), existingBook.getTitle());
+    assertEquals(inputBook.getAuthor(), existingBook.getAuthor());
+    assertEquals(inputBook.getGenres(), existingBook.getGenres());
+    verify(cache, times(1)).remove(inputBook.getTitle().hashCode());
+    verify(bookRepository, times(1)).save(existingBook);
   }
 }

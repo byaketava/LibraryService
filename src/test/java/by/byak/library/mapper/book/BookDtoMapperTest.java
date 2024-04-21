@@ -4,6 +4,8 @@ import by.byak.library.dto.book.BookDto;
 import by.byak.library.entity.Author;
 import by.byak.library.entity.Book;
 import by.byak.library.entity.Genre;
+import by.byak.library.mapper.author.AuthorNameDtoMapper;
+import by.byak.library.mapper.genre.GenreNameDtoMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -11,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 class BookDtoMapperTest {
@@ -42,5 +45,14 @@ class BookDtoMapperTest {
     assertEquals("Genre 1", bookDto.getGenres().get(0).getName());
     assertEquals("Genre 2", bookDto.getGenres().get(1).getName());
     assertEquals("John Doe", bookDto.getAuthor().getName());
+  }
+
+  @Test
+  void testApplyWithNullBook() {
+    BookDtoMapper bookDtoMapper = new BookDtoMapper();
+
+    BookDto bookDto = bookDtoMapper.apply(null);
+
+    assertNull(bookDto);
   }
 }

@@ -10,6 +10,7 @@ import by.byak.library.exception.NotFoundException;
 import by.byak.library.mapper.genre.GenreDtoMapper;
 import by.byak.library.repository.BookRepository;
 import by.byak.library.repository.GenreRepository;
+import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -103,14 +104,50 @@ class GenreServiceTest {
   }
 
   @Test
-  void testFindGenreByNameNotFound() {
-    String genreName = "Thriller";
-    when(genreRepository.findByName(genreName)).thenReturn(Optional.empty());
+  void testFindGenreByName_GenreInCache() {
+    String name = "Test Genre";
+    Genre cachedGenre = new Genre();
+    GenreDto genreDto = new GenreDto();
 
-    assertThrows(NotFoundException.class, () -> genreService.findGenreByName(genreName));
-    verify(genreRepository, times(1)).findByName(genreName);
-    verify(genreMapper, never()).apply(any(Genre.class));
-    assertNull(cache.get(genreName.hashCode()));
+    when(cache.get(name.hashCode())).thenReturn(cachedGenre);
+    when(genreMapper.apply(cachedGenre)).thenReturn(genreDto);
+
+    GenreDto result = genreService.findGenreByName(name);
+
+    assertEquals(genreDto, result);
+    verify(cache, times(1)).get(name.hashCode());
+    verify(genreMapper, times(1)).apply(cachedGenre);
+  }
+
+  @Test
+  void testFindGenreByName_GenreNotFoundInCache() {
+    String name = "Test Genre";
+    Genre genre = new Genre();
+    GenreDto genreDto = new GenreDto();
+
+    when(cache.get(name.hashCode())).thenReturn(null);
+    when(genreRepository.findByName(name)).thenReturn(Optional.of(genre));
+    when(genreMapper.apply(genre)).thenReturn(genreDto);
+
+    GenreDto result = genreService.findGenreByName(name);
+
+    assertEquals(genreDto, result);
+    verify(cache, times(1)).get(name.hashCode());
+    verify(genreRepository, times(1)).findByName(name);
+    verify(genreMapper, times(1)).apply(genre);
+  }
+
+  @Test
+  void testFindGenreByName_GenreNotFoundInRepository() {
+    String name = "Test Genre";
+
+    when(cache.get(name.hashCode())).thenReturn(null);
+    when(genreRepository.findByName(name)).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> genreService.findGenreByName(name));
+
+    verify(cache, times(1)).get(name.hashCode());
+    verify(genreRepository, times(1)).findByName(name);
   }
 
   @Test
@@ -189,15 +226,54 @@ class GenreServiceTest {
   }
 
   @Test
-  void testUpdateGenreNotFound() {
-    Long genreId = 1L;
-    when(genreRepository.findById(genreId)).thenReturn(Optional.empty());
+  void testUpdateGenre_GenreExists() {
+    Long id = 1L;
+    Genre genre = new Genre();
+    genre.setName("Updated Genre");
+    Book book1 = new Book();
+    genre.setBooks(List.of(book1));
 
-    assertThrows(NotFoundException.class, () -> {
-      genreService.updateGenre(genreId, new Genre());
-    });
-    verify(genreRepository, times(1)).findById(genreId);
-    verify(cache, never()).remove(anyInt());
-    verify(genreRepository, never()).save(any(Genre.class));
+    Genre existingGenre = new Genre();
+    existingGenre.setName("Old Genre");
+
+    when(genreRepository.findById(id)).thenReturn(Optional.of(existingGenre));
+
+    genreService.updateGenre(id, genre);
+
+    verify(cache, times(1)).remove(existingGenre.getName().hashCode());
+    verify(genreRepository, times(1)).save(existingGenre);
+  }
+
+  @Test
+  void testUpdateGenre_GenreNotFound() {
+    Long id = 1L;
+    Genre genre = new Genre();
+    genre.setName("Updated Genre");
+
+    when(genreRepository.findById(id)).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> genreService.updateGenre(id, genre));
+
+    verify(genreRepository, times(1)).findById(id);
+  }
+
+  @Test
+  void testUpdateGenre_ExceptionDuringSave() {
+    Long id = 1L;
+    Genre genre = new Genre();
+    genre.setName("Updated Genre");
+    Book book1 = new Book();
+    genre.setBooks(List.of(book1));
+
+    Genre existingGenre = new Genre();
+    existingGenre.setName("Old Genre");
+
+    when(genreRepository.findById(id)).thenReturn(Optional.of(existingGenre));
+    doThrow(new RuntimeException("Save failed")).when(genreRepository).save(existingGenre);
+
+    assertThrows(BadRequestException.class, () -> genreService.updateGenre(id, genre));
+
+    verify(cache, times(1)).remove(existingGenre.getName().hashCode());
+    verify(genreRepository, times(1)).save(existingGenre);
   }
 }
