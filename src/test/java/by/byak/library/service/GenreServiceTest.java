@@ -10,7 +10,6 @@ import by.byak.library.exception.NotFoundException;
 import by.byak.library.mapper.genre.GenreDtoMapper;
 import by.byak.library.repository.BookRepository;
 import by.byak.library.repository.GenreRepository;
-import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
