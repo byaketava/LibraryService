@@ -3,11 +3,13 @@ package by.byak.library.controller;
 import by.byak.library.dto.book.BookDto;
 import by.byak.library.entity.Book;
 import by.byak.library.service.BookService;
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
@@ -78,6 +80,18 @@ class BookControllerTest {
     ResponseEntity<String> response = bookController.addBook(book);
 
     verify(bookService, times(1)).addBook(book);
+    assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    assertEquals("Completed successfully", response.getBody());
+  }
+
+  @Test
+  public void testAddBooks() {
+    Long id = 1L;
+    List<Book> books = Arrays.asList(new Book(), new Book());
+
+    ResponseEntity<String> response = bookController.addBooks(id, books);
+
+    verify(bookService, times(1)).addBooks(id, books);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertEquals("Completed successfully", response.getBody());
   }

@@ -9,6 +9,7 @@ import by.byak.library.exception.AlreadyExistsException;
 import by.byak.library.exception.BadRequestException;
 import by.byak.library.exception.NotFoundException;
 import by.byak.library.mapper.book.BookDtoMapper;
+import by.byak.library.repository.AuthorRepository;
 import by.byak.library.repository.BookRepository;
 import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
@@ -27,6 +28,8 @@ import static org.mockito.Mockito.*;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 class BookServiceTest {
+  @Mock
+  private AuthorRepository authorRepository;
 
   @Mock
   private BookRepository bookRepository;
@@ -64,8 +67,6 @@ class BookServiceTest {
     assertEquals(2, result.size());
     verify(bookRepository, times(1)).findAll();
     verify(bookMapper, times(2)).apply(any(Book.class));
-
-    // Verify that the bookMapper.apply() method is called with any Book object
     verify(bookMapper, times(books.size())).apply(any(Book.class));
   }
 
@@ -184,6 +185,104 @@ class BookServiceTest {
   }
 
   @Test
+  void testAddBook_ExceptionWhileSavingBook() {
+    Book book = new Book();
+    book.setTitle("New Book");
+
+    when(bookRepository.existsByTitle(book.getTitle())).thenReturn(false);
+    doThrow(BadRequestException.class).when(bookRepository).save(book);
+
+    assertThrows(BadRequestException.class, () -> bookService.addBook(book));
+
+    verify(bookRepository, times(1)).existsByTitle(book.getTitle());
+    verify(bookRepository, times(1)).save(book);
+  }
+
+  @Test
+  void testAddBooksWithExistingAuthor() {
+    Author author = new Author();
+    author.setId(1L);
+    author.setName("John Doe");
+
+    List<Book> books = new ArrayList<>();
+    Book book1 = new Book();
+    book1.setTitle("Book 1");
+    Book book2 = new Book();
+    book2.setTitle("Book 2");
+    books.add(book1);
+    books.add(book2);
+
+    when(authorRepository.findById(1L)).thenReturn(Optional.of(author));
+    when(bookRepository.existsByTitle(anyString())).thenReturn(false);
+
+    bookService.addBooks(1L, books);
+
+    verify(bookRepository, times(1)).saveAll(books);
+    verify(authorRepository, times(1)).findById(1L);
+    verify(bookRepository, times(2)).existsByTitle(anyString());
+  }
+
+  @Test
+  void testAddBooksWithNonExistentAuthor() {
+    when(authorRepository.findById(1L)).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> bookService.addBooks(1L, new ArrayList<>()));
+
+    verify(authorRepository, times(1)).findById(1L);
+    verify(bookRepository, never()).existsByTitle(anyString());
+    verify(bookRepository, never()).saveAll(anyList());
+  }
+
+  @Test
+  void testAddBooksWithBookThatAlreadyExists() {
+    Author author = new Author();
+    author.setId(1L);
+    author.setName("John Doe");
+
+    List<Book> books = new ArrayList<>();
+    Book book1 = new Book();
+    book1.setTitle("Book 1");
+    Book book2 = new Book();
+    book2.setTitle("Book 2");
+    books.add(book1);
+    books.add(book2);
+
+    when(authorRepository.findById(1L)).thenReturn(Optional.of(author));
+    when(bookRepository.existsByTitle("Book 1")).thenReturn(true);
+
+    assertThrows(AlreadyExistsException.class, () -> bookService.addBooks(1L, books));
+
+    verify(authorRepository, times(1)).findById(1L);
+    verify(bookRepository, times(1)).existsByTitle("Book 1");
+    verify(bookRepository, never()).saveAll(anyList());
+  }
+
+  @Test
+  void testAddBooksWithException() {
+    Author author = new Author();
+    author.setId(1L);
+    author.setName("John Doe");
+
+    List<Book> books = new ArrayList<>();
+    Book book1 = new Book();
+    book1.setTitle("Book 1");
+    Book book2 = new Book();
+    book2.setTitle("Book 2");
+    books.add(book1);
+    books.add(book2);
+
+    when(authorRepository.findById(1L)).thenReturn(Optional.of(author));
+    when(bookRepository.existsByTitle(anyString())).thenReturn(false);
+    when(bookRepository.saveAll(anyList())).thenThrow(new RuntimeException("Exception occurred"));
+
+    assertThrows(BadRequestException.class, () -> bookService.addBooks(1L, books));
+
+    verify(authorRepository, times(1)).findById(1L);
+    verify(bookRepository, times(2)).existsByTitle(anyString());
+    verify(bookRepository, times(1)).saveAll(anyList());
+  }
+
+  @Test
   void testDeleteBookById_BookExists() {
     Long id = 1L;
     String title = "Test Book";
@@ -211,20 +310,6 @@ class BookServiceTest {
     verify(bookRepository, times(1)).findById(id);
     verify(bookRepository, never()).delete(any(Book.class));
     verify(cache, never()).remove(anyInt());
-  }
-
-  @Test
-  void testAddBook_ExceptionWhileSavingBook() {
-    Book book = new Book();
-    book.setTitle("New Book");
-
-    when(bookRepository.existsByTitle(book.getTitle())).thenReturn(false);
-    doThrow(BadRequestException.class).when(bookRepository).save(book);
-
-    assertThrows(BadRequestException.class, () -> bookService.addBook(book));
-
-    verify(bookRepository, times(1)).existsByTitle(book.getTitle());
-    verify(bookRepository, times(1)).save(book);
   }
 
   @Test
