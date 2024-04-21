@@ -84,7 +84,7 @@ class BookControllerTest {
   }
 
   @Test
-  public void testAddBooks() {
+  void testAddBooks() {
     Long id = 1L;
     List<Book> books = Arrays.asList(new Book(), new Book());
 
