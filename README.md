@@ -1,3 +1,4 @@
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=byaketava_LibraryService)](https://sonarcloud.io/summary/new_code?id=byaketava_LibraryService)
 # Library service
 
 >This is a simple library project that allows you to manage a collection of books, specifying authors and genres, including adding new books, authors and genres, editing existing ones and deleting outdated entries. 
@@ -6,6 +7,7 @@
 - Java 17
 - Spring Boot
 - Maven
+- PostgreSQL
 
 ## Installation
 1. Clone the repository
