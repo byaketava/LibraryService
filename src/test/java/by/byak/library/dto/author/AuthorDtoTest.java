@@ -1,6 +1,7 @@
 package by.byak.library.dto.author;
 
 import by.byak.library.dto.book.BookTitleDto;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AuthorDtoTest {
 
@@ -55,5 +57,26 @@ class AuthorDtoTest {
     assertEquals(2, authorDto.getBooks().size());
     assertEquals("Book 1", authorDto.getBooks().get(0).getTitle());
     assertEquals("Book 2", authorDto.getBooks().get(1).getTitle());
+  }
+
+  @Test
+  void testEqualsAndHashCode() {
+    AuthorDto authorDto1 = new AuthorDto(1L, "John Doe", Arrays.asList(new BookTitleDto(), new BookTitleDto()));
+    AuthorDto authorDto2 = new AuthorDto(1L, "John Doe", Arrays.asList(new BookTitleDto(), new BookTitleDto()));
+
+    assertEquals(authorDto1, authorDto2);
+    assertEquals(authorDto1.hashCode(), authorDto2.hashCode());
+  }
+
+  @Test
+  void testToString() {
+    AuthorDto authorDto = new AuthorDto(1L, "John Doe", Arrays.asList(new BookTitleDto(), new BookTitleDto()));
+
+    String toString = authorDto.toString();
+
+    assertNotNull(toString);
+    assertTrue(toString.contains("AuthorDto"));
+    assertTrue(toString.contains("id=1"));
+    assertTrue(toString.contains("name=John Doe"));
   }
 }

@@ -89,4 +89,24 @@ class BookTest {
     assertTrue(book.getGenres().contains(genre1));
     assertTrue(book.getGenres().contains(genre2));
   }
+
+  @Test
+  public void testEqualsAndHashCode() {
+    Book book1 = new Book();
+    book1.setTitle("Test Title");
+
+    Book book2 = new Book();
+    book2.setTitle("Test Title");
+
+    assertEquals(book1, book2);
+    assertEquals(book1.hashCode(), book2.hashCode());
+  }
+
+  @Test
+  public void testToString() {
+    Book book = new Book();
+    book.setTitle("Test Title");
+
+    assertTrue(book.toString().contains("Test Title"));
+  }
 }

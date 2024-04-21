@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BookTitleDtoTest {
 
@@ -24,11 +25,27 @@ class BookTitleDtoTest {
   }
 
   @Test
-  void testSetterGetter() {
+  public void testGetterAndSetter() {
     BookTitleDto bookTitleDto = new BookTitleDto();
 
-    bookTitleDto.setTitle("Book Title");
+    bookTitleDto.setTitle("Test Title");
 
-    assertEquals("Book Title", bookTitleDto.getTitle());
+    assertEquals("Test Title", bookTitleDto.getTitle());
+  }
+
+  @Test
+  public void testEqualsAndHashCode() {
+    BookTitleDto bookTitleDto1 = new BookTitleDto("Test Title");
+    BookTitleDto bookTitleDto2 = new BookTitleDto("Test Title");
+
+    assertEquals(bookTitleDto1, bookTitleDto2);
+    assertEquals(bookTitleDto1.hashCode(), bookTitleDto2.hashCode());
+  }
+
+  @Test
+  public void testToString() {
+    BookTitleDto bookTitleDto = new BookTitleDto("Test Title");
+
+    assertTrue(bookTitleDto.toString().contains("Test Title"));
   }
 }

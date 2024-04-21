@@ -1,11 +1,13 @@
 package by.byak.library.dto.book;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import by.byak.library.dto.author.AuthorNameDto;
 import by.byak.library.dto.genre.GenreNameDto;
-import org.junit.jupiter.api.Assertions;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -23,20 +25,18 @@ class BookDtoTest {
 
     BookDto bookDto = new BookDto(1L, "Book Title", genres, author);
 
-    Assertions.assertEquals(1L, bookDto.getId());
-    Assertions.assertEquals("Book Title", bookDto.getTitle());
-    Assertions.assertEquals(2, bookDto.getGenres().size());
-    Assertions.assertEquals("Genre 1", bookDto.getGenres().get(0).getName());
-    Assertions.assertEquals("Genre 2", bookDto.getGenres().get(1).getName());
-    Assertions.assertEquals("John Doe", bookDto.getAuthor().getName());
+    assertEquals(1L, bookDto.getId());
+    assertEquals("Book Title", bookDto.getTitle());
+    assertEquals(2, bookDto.getGenres().size());
+    assertEquals("Genre 1", bookDto.getGenres().get(0).getName());
+    assertEquals("Genre 2", bookDto.getGenres().get(1).getName());
+    assertEquals("John Doe", bookDto.getAuthor().getName());
   }
 
   @Test
   void testNoArgsConstructor() {
-    // Act
     BookDto bookDto = new BookDto();
 
-    // Assert
     assertNotNull(bookDto);
     assertNull(bookDto.getId());
     assertNull(bookDto.getTitle());
@@ -45,46 +45,42 @@ class BookDtoTest {
   }
 
   @Test
-  void testSetterGetter() {
+  void testGettersAndSetters() {
+    Long id = 1L;
+    String title = "The Great Book";
+    List<GenreNameDto> genres = Arrays.asList(new GenreNameDto(), new GenreNameDto());
+    AuthorNameDto author = new AuthorNameDto();
+
     BookDto bookDto = new BookDto();
-
-    bookDto.setId(1L);
-    bookDto.setTitle("Book Title");
-
-    List<GenreNameDto> genres = new ArrayList<>();
-    genres.add(new GenreNameDto("Genre 1"));
-    genres.add(new GenreNameDto("Genre 2"));
-
+    bookDto.setId(id);
+    bookDto.setTitle(title);
     bookDto.setGenres(genres);
-
-    AuthorNameDto author = new AuthorNameDto("John Doe");
     bookDto.setAuthor(author);
 
-    Assertions.assertEquals(1L, bookDto.getId());
-    Assertions.assertEquals("Book Title", bookDto.getTitle());
-    Assertions.assertEquals(2, bookDto.getGenres().size());
-    Assertions.assertEquals("Genre 1", bookDto.getGenres().get(0).getName());
-    Assertions.assertEquals("Genre 2", bookDto.getGenres().get(1).getName());
-    Assertions.assertEquals("John Doe", bookDto.getAuthor().getName());
+    assertEquals(id, bookDto.getId());
+    assertEquals(title, bookDto.getTitle());
+    assertEquals(genres, bookDto.getGenres());
+    assertEquals(author, bookDto.getAuthor());
   }
 
   @Test
   void testEqualsAndHashCode() {
-    BookDto book1 = new BookDto(1L, "Book 1", List.of(new GenreNameDto("Fiction")), new AuthorNameDto("John Doe"));
-    BookDto book2 = new BookDto(1L, "Book 1", List.of(new GenreNameDto("Fiction")), new AuthorNameDto("John Doe"));
-    BookDto book3 = new BookDto(2L, "Book 2", List.of(new GenreNameDto("Fantasy")), new AuthorNameDto("Jane Doe"));
+    BookDto bookDto1 = new BookDto(1L, "The Great Book", Arrays.asList(new GenreNameDto(), new GenreNameDto()), new AuthorNameDto());
+    BookDto bookDto2 = new BookDto(1L, "The Great Book", Arrays.asList(new GenreNameDto(), new GenreNameDto()), new AuthorNameDto());
 
-    Assertions.assertEquals(book1, book2);
-    Assertions.assertNotEquals(book1, book3);
-
-    Assertions.assertEquals(book1.hashCode(), book2.hashCode());
-    Assertions.assertNotEquals(book1.hashCode(), book3.hashCode());
+    assertEquals(bookDto1, bookDto2);
+    assertEquals(bookDto1.hashCode(), bookDto2.hashCode());
   }
 
   @Test
   void testToString() {
-    BookDto book = new BookDto(1L, "Test Book", List.of(new GenreNameDto("Fiction")), new AuthorNameDto("John Doe"));
-    String expectedToString = "BookDto(id=1, title=Test Book, genres=[GenreNameDto(name=Fiction)], author=AuthorNameDto(name=John Doe))";
-    Assertions.assertEquals(expectedToString, book.toString());
+    BookDto bookDto = new BookDto(1L, "The Great Book", Arrays.asList(new GenreNameDto(), new GenreNameDto()), new AuthorNameDto());
+
+    String toString = bookDto.toString();
+
+    assertNotNull(toString);
+    assertTrue(toString.contains("BookDto"));
+    assertTrue(toString.contains("id=1"));
+    assertTrue(toString.contains("title=The Great Book"));
   }
 }

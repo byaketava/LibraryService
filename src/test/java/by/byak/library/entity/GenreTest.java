@@ -77,4 +77,24 @@ class GenreTest {
     assertEquals(1, genre.getBooks().size());
     assertTrue(genre.getBooks().contains(newBook));
   }
+
+  @Test
+  public void testEqualsAndHashCode() {
+    Genre genre1 = new Genre();
+    genre1.setName("Test Genre");
+
+    Genre genre2 = new Genre();
+    genre2.setName("Test Genre");
+
+    assertEquals(genre1, genre2);
+    assertEquals(genre1.hashCode(), genre2.hashCode());
+  }
+
+  @Test
+  public void testToString() {
+    Genre genre = new Genre();
+    genre.setName("Test Genre");
+
+    assertTrue(genre.toString().contains("Test Genre"));
+  }
 }

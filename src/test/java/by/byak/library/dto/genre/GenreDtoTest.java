@@ -1,6 +1,7 @@
 package by.byak.library.dto.genre;
 
 import by.byak.library.dto.book.BookTitleDto;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GenreDtoTest {
 
@@ -55,5 +57,26 @@ class GenreDtoTest {
     assertEquals(2, genreDto.getBooks().size());
     assertEquals("Book 1", genreDto.getBooks().get(0).getTitle());
     assertEquals("Book 2", genreDto.getBooks().get(1).getTitle());
+  }
+
+  @Test
+  void testEqualsAndHashCode() {
+    GenreDto genreDto1 = new GenreDto(1L, "Fiction", Arrays.asList(new BookTitleDto(), new BookTitleDto()));
+    GenreDto genreDto2 = new GenreDto(1L, "Fiction", Arrays.asList(new BookTitleDto(), new BookTitleDto()));
+
+    assertEquals(genreDto1, genreDto2);
+    assertEquals(genreDto1.hashCode(), genreDto2.hashCode());
+  }
+
+  @Test
+  void testToString() {
+    GenreDto genreDto = new GenreDto(1L, "Fiction", Arrays.asList(new BookTitleDto(), new BookTitleDto()));
+
+    String toString = genreDto.toString();
+
+    assertNotNull(toString);
+    assertTrue(toString.contains("GenreDto"));
+    assertTrue(toString.contains("id=1"));
+    assertTrue(toString.contains("name=Fiction"));
   }
 }

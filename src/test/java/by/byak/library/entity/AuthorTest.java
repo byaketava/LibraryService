@@ -66,4 +66,24 @@ class AuthorTest {
     assertTrue(author.getBooks().contains(book1));
     assertTrue(author.getBooks().contains(book2));
   }
+
+  @Test
+  public void testEqualsAndHashCode() {
+    Author author1 = new Author();
+    author1.setName("Test Author");
+
+    Author author2 = new Author();
+    author2.setName("Test Author");
+
+    assertEquals(author1, author2);
+    assertEquals(author1.hashCode(), author2.hashCode());
+  }
+
+  @Test
+  public void testToString() {
+    Author author = new Author();
+    author.setName("Test Author");
+
+    assertTrue(author.toString().contains("Test Author"));
+  }
 }
