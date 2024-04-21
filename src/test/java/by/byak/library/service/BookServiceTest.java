@@ -275,7 +275,7 @@ class BookServiceTest {
     when(bookRepository.existsByTitle(anyString())).thenReturn(false);
     when(bookRepository.saveAll(anyList())).thenThrow(new RuntimeException("Exception occurred"));
 
-    assertThrows(NotFoundException.class, () -> bookService.addBooks(1L, new ArrayList<>()));
+    assertThrows(BadRequestException.class, () -> bookService.addBooks(1L, books));
 
     verify(authorRepository, times(1)).findById(1L);
     verify(bookRepository, times(2)).existsByTitle(anyString());
