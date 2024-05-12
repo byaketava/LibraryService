@@ -45,7 +45,7 @@ class GenreServiceTest {
   }
 
   @Test
-  void testFindAllGenres_HappyPath() {
+  void testFindAllGenresSuccess() {
     Genre genre1 = new Genre();
     Genre genre2 = new Genre();
     List<Genre> genres = List.of(genre1, genre2);
@@ -191,7 +191,7 @@ class GenreServiceTest {
   }
 
   @Test
-  void testDeleteGenreById_HappyPath() {
+  void testDeleteGenreByIdSuccess() {
     Long genreId = 1L;
     Genre genre = new Genre();
     genre.setName(" Test Genre");

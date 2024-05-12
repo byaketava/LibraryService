@@ -250,7 +250,7 @@ class AuthorServiceTest {
   void testUpdateAuthor_BooksAuthorSetCorrectly() {
     Long id = 1L;
     Author author = new Author();
-    author.setName("Updated Name"); // Ensure the name is not null
+    author.setName("Updated Name");
     Book book1 = new Book();
     Book book2 = new Book();
     author.setBooks(Arrays.asList(book1, book2));
