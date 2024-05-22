@@ -31,6 +31,7 @@ public class BookController {
   private final GenreService genreService;
   private final BookRepository repository;
   private static final String SUCCESS = "Completed successfully";
+  private static final String REDIRECT = "redirect:/api/books";
 
   @GetMapping
   public String homePage() {
@@ -88,7 +89,7 @@ public class BookController {
       return "addBook";
     }
     service.addBook(book);
-    return "redirect:/api/books";
+    return REDIRECT;
   }
 
   @PostMapping("/books/addAuthorBooks")
@@ -100,7 +101,7 @@ public class BookController {
   @PostMapping("/books/delete/{id}")
   public String deleteBookById(@PathVariable Long id) {
     service.deleteBookById(id);
-    return "redirect:/api/books";
+    return REDIRECT;
   }
 
   @GetMapping("/books/update/{id}")
@@ -126,6 +127,6 @@ public class BookController {
       return "updateBook";
     }
     service.updateBook(id, book);
-    return "redirect:/api/books";
+    return REDIRECT;
   }
 }

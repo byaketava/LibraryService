@@ -27,7 +27,7 @@ public class GenreController {
   private final BookService bookService;
   private final GenreRepository repository;
   private static final String SUCCESS = "Completed successfully";
-
+  private static final String REDIRECT = "redirect:/api/genres";
 
   @GetMapping
   public String findAllGenres(Model model) {
@@ -58,7 +58,7 @@ public class GenreController {
       return "addGenre";
     }
     service.addGenre(genre);
-    return "redirect:/api/genres";
+    return REDIRECT;
   }
 
   @PostMapping("/addBasic")
@@ -70,7 +70,7 @@ public class GenreController {
   @PostMapping("/delete/{id}")
   public String deleteGenreById(@PathVariable Long id) {
     service.deleteGenreById(id);
-    return "redirect:/api/genres";
+    return REDIRECT;
   }
 
   @GetMapping("/update/{id}")
@@ -92,6 +92,6 @@ public class GenreController {
       return "updateGenre";
     }
     service.updateGenre(id, genre);
-    return "redirect:/api/genres";
+    return REDIRECT;
   }
 }

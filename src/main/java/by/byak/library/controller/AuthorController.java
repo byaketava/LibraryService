@@ -27,7 +27,7 @@ public class AuthorController {
   private final BookService bookService;
   private final AuthorRepository repository;
   private static final String SUCCESS = "Completed successfully";
-
+  private static final String REDIRECT = "redirect:/api/authors";
 
   @GetMapping
   public String findAllAuthors(Model model) {
@@ -58,7 +58,7 @@ public class AuthorController {
       return "addAuthor";
     }
     service.addAuthor(author);
-    return "redirect:/api/authors";
+    return REDIRECT;
   }
 
   @PostMapping("/addBasic")
@@ -70,7 +70,7 @@ public class AuthorController {
   @PostMapping("/delete/{id}")
   public String deleteAuthorById(@PathVariable Long id) {
     service.deleteAuthorById(id);
-    return "redirect:/api/authors";
+    return REDIRECT;
   }
 
   @GetMapping("/update/{id}")
@@ -92,6 +92,6 @@ public class AuthorController {
       return "updateAuthor";
     }
     service.updateAuthor(id, author);
-    return "redirect:/api/authors";
+    return REDIRECT;
   }
 }
