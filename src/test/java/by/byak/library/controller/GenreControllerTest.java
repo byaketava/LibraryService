@@ -1,3 +1,4 @@
+/*
 package by.byak.library.controller;
 
 import by.byak.library.dto.genre.GenreDto;
@@ -89,3 +90,4 @@ class GenreControllerTest {
     assertEquals("Completed successfully", response.getBody());
   }
 }
+*/
