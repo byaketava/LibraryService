@@ -11,5 +11,4 @@ FROM eclipse-temurin:17-alpine
 WORKDIR /app
 
 COPY --from=build /app/target/Library-0.0.1-SNAPSHOT.jar Library.jar
-EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "Library.jar"]
