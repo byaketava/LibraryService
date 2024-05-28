@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/api/authors")
+@RequestMapping("/authors")
 @AllArgsConstructor
 public class AuthorController {
   private final AuthorService service;
   private final BookService bookService;
   private final AuthorRepository repository;
   private static final String SUCCESS = "Completed successfully";
-  private static final String REDIRECT = "redirect:/api/authors";
+  private static final String REDIRECT = "redirect:/authors";
 
   @GetMapping
   public String findAllAuthors(Model model) {

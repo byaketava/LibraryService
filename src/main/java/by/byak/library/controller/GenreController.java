@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/api/genres")
+@RequestMapping("/genres")
 @AllArgsConstructor
 public class GenreController {
   private final GenreService service;
   private final BookService bookService;
   private final GenreRepository repository;
   private static final String SUCCESS = "Completed successfully";
-  private static final String REDIRECT = "redirect:/api/genres";
+  private static final String REDIRECT = "redirect:/genres";
 
   @GetMapping
   public String findAllGenres(Model model) {
