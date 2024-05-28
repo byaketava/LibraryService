@@ -66,13 +66,10 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <configuration>
+                    <!-- Укажите здесь ваш основной класс -->
+                    <mainClass>by.byak.library.LibraryApplication</mainClass>
+                </configuration>
             </plugin>
 
             <plugin>
