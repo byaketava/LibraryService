@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping
+@RequestMapping("/api")
 @AllArgsConstructor
 public class BookController {
   private final BookService service;
@@ -31,7 +31,7 @@ public class BookController {
   private final GenreService genreService;
   private final BookRepository repository;
   private static final String SUCCESS = "Completed successfully";
-  private static final String REDIRECT = "redirect:/books";
+  private static final String REDIRECT = "redirect:/api/books";
 
   @GetMapping
   public String homePage() {
